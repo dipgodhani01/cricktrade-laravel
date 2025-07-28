@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+ font-family: "Jost", sans-serif;
+}
+
+.table-responsive::-webkit-scrollbar {
+  height: 9px !important;
+  overflow: hidden;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background-color: #a3a3a3 !important;
+  border-radius: 10px;
+}
+
+.homeBannerSection{
+  background-image: url('./assets/home_banner.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.space_bg{
+    background-image: url('./assets/space_bg.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}

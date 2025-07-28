@@ -1,0 +1,55 @@
+ export  const formFieldsData = [
+    {
+      label: "Auction Logo",
+      name: "logo",
+      type: "file",
+    },
+    {
+      label: "Auction Name",
+      name: "name",
+      type: "text",
+      placeholder: "Enter auction name",
+      required: true,
+    },
+    {
+      label: "Auction Date",
+      name: "date",
+      type: "date",
+      required: true,
+    },
+    {
+      label: "Type of Sports",
+      name: "sportType",
+      type: "select",
+      options: [{ label: "Cricket", value: "cricket" }],
+      required: true,
+    },
+    {
+      label: "Point Per Team",
+      name: "pointPerTeam",
+      type: "number",
+      placeholder: "e.g. 10000000",
+      required: true,
+    },
+    {
+      label: "Minimum Bid",
+      name: "minimumBid",
+      type: "number",
+      placeholder: "e.g. 100000",
+      required: true,
+    },
+    {
+      label: "Bid Increase By",
+      name: "bidIncrement",
+      type: "number",
+      placeholder: "e.g. 100000",
+      required: true,
+    },
+    {
+      label: "Players Per Team",
+      name: "playersPerTeam",
+      type: "number",
+      placeholder: "e.g. 11",
+      required: true,
+    },
+  ];
