@@ -16,7 +16,7 @@
       name: "date",
       type: "date",
       required: true,
-    },
+    },  
     {
       label: "Type of Sports",
       name: "sportType",

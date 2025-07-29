@@ -1,0 +1,53 @@
+import { lazy } from "react";
+
+export const HomeRoutesPath = [
+  {
+    path: "/",
+    component: lazy(() => import("../../pages/Home")),
+    meta: { authRoute: false },
+  },
+  {
+    path: "home",
+    component: lazy(() => import("../../pages/Home")),
+    meta: { authRoute: false },
+  },
+
+  {
+    path: "about-us",
+    component: lazy(() => import("../../pages/AboutUs")),
+    meta: { authRoute: false },
+  },
+  {
+    path: "privacy-policy",
+    component: lazy(() => import("../../pages/PrivacyPolicy")),
+    meta: { authRoute: false },
+  },
+  {
+    path: "terms",
+    component: lazy(() => import("../../pages/Terms")),
+    meta: { authRoute: false },
+  },
+  {
+    path: "refund-cancellation",
+    component: lazy(() => import("../../pages/Refund")),
+    meta: { authRoute: false },
+  },
+  {
+    path: "contact",
+    component: lazy(() => import("../../pages/ContactUs")),
+    meta: { authRoute: false },
+  },
+];
+
+export const DashboardRoutesPath = [
+  {
+    path: "/dashboard",
+    component: lazy(() => import("../../pages/Dashboard")),
+    meta: { authRoute: true },
+  },
+  {
+    path: "/create-auction",
+    component: lazy(() => import("../../components/dashboard/auction/CreateAuction")),
+    meta: { authRoute: true },
+  },
+];
