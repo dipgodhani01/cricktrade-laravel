@@ -52,7 +52,6 @@ function CreateAuction() {
 
     const newError = {};
     let hasError = false;
-
     Object.keys(formData).forEach((key) => {
       if (formData[key] === "" || formData[key] === null) {
         newError[key] = EnglishConstant[key] || "Required";
@@ -61,7 +60,6 @@ function CreateAuction() {
         newError[key] = "";
       }
     });
-
     setError(newError);
 
     if (!hasError) {
@@ -77,7 +75,6 @@ function CreateAuction() {
       data.append("player_perteam", formData.playersPerTeam);
 
       dispatch(createAuction(data));
-      navigate(-1);
     }
   };
 
@@ -85,7 +82,6 @@ function CreateAuction() {
     <div className="p-4 bg-white rounded shadow">
       <form onSubmit={onFormSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Image Preview */}
           {imagePreview && (
             <div>
               <img
