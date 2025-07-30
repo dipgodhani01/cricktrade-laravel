@@ -1,36 +1,52 @@
-import { useState } from "react";
-import { addAuction } from "../../../data/allMapingData";
-import Formfields from "../../common/Formfields";
-import { EnglishConstant } from "../../../messages/message";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createAuction } from "../../../redux/slice/auctionSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  getAuctionById,
+  updateAuction,
+} from "../../../redux/slice/auctionSlice";
+import Formfields from "../../common/Formfields";
+import { addAuction } from "../../../data/allMapingData";
 import { toast } from "react-toastify";
 
-const initialFormData = {
-  logo: null,
-  name: "",
-  date: "",
-  typeOfSports: "",
-  pointPerTeam: "",
-  minimumBid: "",
-  bidIncrement: "",
-  playersPerTeam: "",
-};
-
-function CreateAuction() {
+function EditAuction() {
+  const [formData, setFormData] = useState({
+    logo: null,
+    name: "",
+    date: "",
+    typeOfSports: "",
+    pointPerTeam: "",
+    minimumBid: "",
+    bidIncrement: "",
+    playersPerTeam: "",
+  });
   const [imagePreview, setImagePreview] = useState(null);
-  const [formData, setFormData] = useState(initialFormData);
-  const user_id = useSelector((state) => state.user.user.user_id);
+  const [error, setError] = useState({});
+  const { auctionId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { selectedAuction } = useSelector((state) => state.auctions);
 
-  const [error, setError] = useState(
-    Object.keys(initialFormData).reduce((acc, key) => {
-      acc[key] = "";
-      return acc;
-    }, {})
-  );
+  useEffect(() => {
+    dispatch(getAuctionById(auctionId));
+  }, [auctionId, dispatch]);
+
+  useEffect(() => {
+    if (selectedAuction) {
+      setFormData({
+        logo: null,
+        name: selectedAuction?.auction_name || "",
+        date: selectedAuction?.auction_date || "",
+        typeOfSports: selectedAuction?.sports_type || "",
+        pointPerTeam: selectedAuction?.point_perteam || "",
+        minimumBid: selectedAuction?.minimum_bid || "",
+        bidIncrement: selectedAuction?.bid_increment || "",
+        playersPerTeam: selectedAuction?.player_perteam || "",
+      });
+
+      setImagePreview(selectedAuction?.auction_logo || null);
+    }
+  }, [selectedAuction]);
 
   const onChangeField = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -54,20 +70,25 @@ function CreateAuction() {
 
     const newError = {};
     let hasError = false;
+
     Object.keys(formData).forEach((key) => {
-      if (formData[key] === "" || formData[key] === null) {
+      if (key !== "logo" && (formData[key] === "" || formData[key] === null)) {
         newError[key] = EnglishConstant[key] || "Required";
         hasError = true;
       } else {
         newError[key] = "";
       }
     });
+
     setError(newError);
 
     if (!hasError) {
       const data = new FormData();
-      data.append("user_id", user_id);
-      data.append("auction_logo", formData.logo);
+      data.append("auction_id", auctionId);
+      if (formData.logo) {
+        data.append("auction_logo", formData.logo);
+      }
+      data.append("_method", "PUT");
       data.append("auction_name", formData.name);
       data.append("auction_date", formData.date);
       data.append("sports_type", formData.typeOfSports);
@@ -77,9 +98,12 @@ function CreateAuction() {
       data.append("player_perteam", formData.playersPerTeam);
 
       try {
-        await dispatch(createAuction(data)).unwrap();
+        await dispatch(updateAuction(data)).unwrap();
+        toast.success("Auction updated successfully!");
         navigate(-1);
       } catch (err) {
+        console.log(err);
+
         toast.error(err);
       }
     }
@@ -87,6 +111,7 @@ function CreateAuction() {
 
   return (
     <div className="p-4 bg-white rounded shadow">
+      <h2 className="text-xl font-semibold mb-4">Edit Auction</h2>
       <form onSubmit={onFormSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {imagePreview && (
@@ -122,9 +147,9 @@ function CreateAuction() {
         <div className="mt-4">
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
           >
-            Create Auction
+            Update Auction
           </button>
         </div>
       </form>
@@ -132,4 +157,4 @@ function CreateAuction() {
   );
 }
 
-export default CreateAuction;
+export default EditAuction;

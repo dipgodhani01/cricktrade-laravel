@@ -1,43 +1,52 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { deleteAuction, getUserAuctions } from "../redux/slice/auctionSlice";
-import { useEffect } from "react";
-import Loader from "../components/common/Loader";
+import { useEffect, useState } from "react";
 import { auctionListTableHeader } from "../data/allMapingData";
 import { formatDate, formatIndianNumber } from "../helper/helper";
 import { MdDashboard, MdDelete, MdEdit } from "react-icons/md";
 import { FaUser, FaUserGroup } from "react-icons/fa6";
+import Loader2 from "../components/common/Loader2";
 
 function Dashboard() {
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [selectedAuctionId, setSelectedAuctionId] = useState("");
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.user.user.user_id);
   const { auctions, loading } = useSelector((state) => state.auctions);
 
-  function handleDeleteAuction(userId, auctionId) {
-    dispatch(deleteAuction({ userId, auctionId }));
+  function confirmDelete(auctionId) {
+    setSelectedAuctionId(auctionId);
+    setShowConfirmModal(true);
   }
 
+  function handleDeleteAuctionConfirmed() {
+    if (selectedAuctionId) {
+      dispatch(deleteAuction({ auctionId: selectedAuctionId }));
+      setShowConfirmModal(false);
+      setSelectedAuctionId("");
+    }
+  }
   useEffect(() => {
     dispatch(getUserAuctions(userId));
   }, []);
 
-  console.log("Auctions", auctions);
-
   return (
     <div>
-      {loading ? (
-        <Loader />
-      ) : (
-        <div className="bg-white p-4 rounded shadow">
-          <h2 className="text-2xl font-medium">My Auction List</h2>
-          <button
-            className="bg-green-700 block text-white px-4 py-2 mt-4 rounded mx-auto"
-            onClick={() => navigate("/create-auction")}
-          >
-            + Add Auction
-          </button>
-          <br />
+      <div className="bg-white p-4 rounded shadow">
+        <h2 className="text-2xl font-medium">My Auction List</h2>
+        <button
+          className="bg-green-700 block text-white px-4 py-2 mt-4 rounded mx-auto"
+          onClick={() => navigate("/create-auction")}
+        >
+          + Add Auction
+        </button>
+        <br />
+        {loading ? (
+          <Loader2 />
+        ) : (
           <div className="mt-4 overflow-x-auto table-responsive">
             {auctions && auctions.length > 0 ? (
               <table className="border-collapse w-full border mb-3 min-w-[1120px] border-black">
@@ -63,16 +72,16 @@ function Dashboard() {
                           <div className="flex gap-2 text-blue-800">
                             <button
                               className="bg-gray-100 hover:bg-gray-200 transition h-8 w-8 flex items-center justify-center rounded-full"
-                              // onClick={() => editAuction(data._id)}
+                              onClick={() =>
+                                navigate(`/edit-auction/${data.id}`)
+                              }
                               title="Edit Auction"
                             >
                               <MdEdit size={20} />
                             </button>
                             <button
                               className="bg-gray-100 hover:bg-gray-200 transition h-8 w-8 flex items-center justify-center rounded-full"
-                              onClick={() =>
-                                handleDeleteAuction(data.user_id, data.id)
-                              }
+                              onClick={() => confirmDelete(data.id)}
                               title="Delete Auction"
                             >
                               <MdDelete size={20} />
@@ -140,6 +149,30 @@ function Dashboard() {
                 No Auction Available
               </div>
             )}
+          </div>
+        )}
+      </div>
+
+      {showConfirmModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-md text-center w-[90%] max-w-md">
+            <h3 className="text-2xl font-medium mb-4">
+              Are you sure you want to delete this auction?
+            </h3>
+            <div className="flex justify-end gap-4 pt-2">
+              <button
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 min-w-20 rounded"
+                onClick={handleDeleteAuctionConfirmed}
+              >
+                Yes
+              </button>
+              <button
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 min-w-20 rounded"
+                onClick={() => setShowConfirmModal(false)}
+              >
+                No
+              </button>
+            </div>
           </div>
         </div>
       )}

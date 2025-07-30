@@ -50,4 +50,9 @@ export const DashboardRoutesPath = [
     component: lazy(() => import("../../components/dashboard/auction/CreateAuction")),
     meta: { authRoute: true },
   },
+  {
+    path: "/edit-auction/:auctionId",
+    component: lazy(() => import("../../components/dashboard/auction/EditAuction")),
+    meta: { authRoute: true },
+  },
 ];

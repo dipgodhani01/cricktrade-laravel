@@ -4,7 +4,9 @@ import { toast } from "react-toastify";
 import {
   createAuctionApi,
   deleteAuctionApi,
+  getAuctionByIdApi,
   getUserAuctionsApi,
+  updateAuctionApi,
 } from "../../utils/api";
 
 axios.defaults.withCredentials = true;
@@ -16,7 +18,6 @@ export const createAuction = createAsyncThunk(
       const response = await createAuctionApi(formData);
       toast.success(response.data.message);
     } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong");
       return rejectWithValue(error.response?.data?.message);
     }
   }
@@ -35,12 +36,26 @@ export const getUserAuctions = createAsyncThunk(
     }
   }
 );
+export const getAuctionById = createAsyncThunk(
+  "auctions/getAuctionById",
+  async (auctionId, { rejectWithValue }) => {
+    try {
+      const response = await getAuctionByIdApi(auctionId);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
+    }
+  }
+);
 
 export const deleteAuction = createAsyncThunk(
   "auctions/deleteAuction",
-  async ({ userId, auctionId }, { rejectWithValue, dispatch }) => {
+  async ({ auctionId }, { rejectWithValue, dispatch, getState }) => {
     try {
-      const response = await deleteAuctionApi({ userId, auctionId });
+      const response = await deleteAuctionApi(auctionId);
+      const userId = getState().user.user.user_id;
       dispatch(getUserAuctions(userId));
       toast.success(response.data.message);
       return response.data.data;
@@ -50,13 +65,27 @@ export const deleteAuction = createAsyncThunk(
     }
   }
 );
+
+export const updateAuction = createAsyncThunk(
+  "auctions/updateAuction",
+  async (formData, { rejectWithValue, dispatch ,getState }) => {
+    try {
+      const response = await updateAuctionApi(formData);
+      const userId = getState().user.user.user_id;
+      dispatch(getUserAuctions(userId));
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message);
+    }
+  }
+);
+
 // const userID = getState().user.user.user_id;
 // console.log(userID);
 
 const auctionSlice = createSlice({
   name: "auctions",
   initialState: {
-    success: false,
     loading: false,
     auctions: [],
     selectedAuction: null,
@@ -73,14 +102,25 @@ const auctionSlice = createSlice({
       .addCase(createAuction.rejected, (state) => {
         state.loading = false;
       })
-
+      .addCase(getUserAuctions.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(getUserAuctions.fulfilled, (state, action) => {
         state.loading = false;
         state.auctions = action.payload;
       })
       .addCase(getUserAuctions.rejected, (state) => {
         state.loading = false;
-        state.success = false;
+      })
+      .addCase(getAuctionById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getAuctionById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedAuction = action.payload;
+      })
+      .addCase(getAuctionById.rejected, (state) => {
+        state.loading = false;
       })
       .addCase(deleteAuction.pending, (state) => {
         state.loading = true;
@@ -89,6 +129,15 @@ const auctionSlice = createSlice({
         state.loading = false;
       })
       .addCase(deleteAuction.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(updateAuction.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateAuction.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(updateAuction.rejected, (state) => {
         state.loading = false;
       });
   },
