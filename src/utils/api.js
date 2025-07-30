@@ -26,3 +26,6 @@ export const deleteAuctionApi = (auctionId) => {
 export const updateAuctionApi = (formData) => {
   return api.post(`/api/auction/update`,formData);
 };
+
+export const createPlayerApi = (formData) =>
+  api.post("/api/player/create-player", formData);

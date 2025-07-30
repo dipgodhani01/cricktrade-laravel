@@ -47,12 +47,30 @@ export const DashboardRoutesPath = [
   },
   {
     path: "/create-auction",
-    component: lazy(() => import("../../components/dashboard/auction/CreateAuction")),
+    component: lazy(() =>
+      import("../../components/dashboard/auction/CreateAuction")
+    ),
     meta: { authRoute: true },
   },
   {
     path: "/edit-auction/:auctionId",
-    component: lazy(() => import("../../components/dashboard/auction/EditAuction")),
+    component: lazy(() =>
+      import("../../components/dashboard/auction/EditAuction")
+    ),
+    meta: { authRoute: true },
+  },
+  {
+    path: "/players/:auctionId",
+    component: lazy(() =>
+      import("../../components/dashboard/player/PlayerList")
+    ),
+    meta: { authRoute: true },
+  },
+  {
+    path: "/create-player/:auctionId",
+    component: lazy(() =>
+      import("../../components/dashboard/player/CreatePlayer")
+    ),
     meta: { authRoute: true },
   },
 ];

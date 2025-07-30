@@ -80,8 +80,6 @@ export const updateAuction = createAsyncThunk(
   }
 );
 
-// const userID = getState().user.user.user_id;
-// console.log(userID);
 
 const auctionSlice = createSlice({
   name: "auctions",
