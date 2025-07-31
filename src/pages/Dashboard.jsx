@@ -95,7 +95,7 @@ function Dashboard() {
                             </button>
                             <button
                               className="bg-gray-100 hover:bg-gray-200 transition h-8 w-8 flex items-center justify-center rounded-full"
-                              // onClick={() => navigate(`teams/${data._id}`)}
+                              onClick={() => navigate(`/teams/${data.id}`)}
                               title="All Teams"
                             >
                               <FaUserGroup size={16} />

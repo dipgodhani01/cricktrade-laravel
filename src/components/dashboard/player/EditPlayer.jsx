@@ -6,6 +6,7 @@ import { addPlayer } from "../../../data/allMapingData";
 import { toast } from "react-toastify";
 import { initialPlayerData } from "../../../data/initialState";
 import { getPlayerById, updatePlayer } from "../../../redux/slice/playerSlice";
+import Loader3 from "../../common/Loader3";
 
 function EditPlayer() {
   const [formData, setFormData] = useState(initialPlayerData);
@@ -139,7 +140,7 @@ function EditPlayer() {
             type="submit"
             className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
           >
-            Update Player
+            {!loading ? "Update Player" : <Loader3 />}
           </button>
         </div>
       </form>

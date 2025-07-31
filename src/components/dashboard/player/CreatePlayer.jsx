@@ -6,6 +6,7 @@ import { createPlayer } from "../../../redux/slice/playerSlice";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { initialPlayerData } from "../../../data/initialState";
+import Loader3 from "../../common/Loader3";
 
 function CreatePlayer() {
   const [imagePreview, setImagePreview] = useState(null);
@@ -113,14 +114,7 @@ function CreatePlayer() {
             type="submit"
             className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
-            {!loading ? (
-              "Add Player"
-            ) : (
-              <div className="text-white flex justify-center items-center font-medium text-xl">
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                &nbsp;
-              </div>
-            )}
+            {!loading ? "Add Player" : <Loader3 />}
           </button>
         </div>
       </form>

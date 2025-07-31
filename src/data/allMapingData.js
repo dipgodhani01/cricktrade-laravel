@@ -117,6 +117,11 @@ export const playerListTableHeader = [
   "Tshirt Name",
   "Tshirt Number",
 ];
+export const teamListTableHeader = [
+  "Actions",
+  "Team Logo",
+  "Team Name",
+];
 
 export const addPlayer = ({
   error,
@@ -128,7 +133,7 @@ export const addPlayer = ({
   trouserSize,
   tshirtName,
   tshirtNumber,
-  onChangeField
+  onChangeField,
 }) => {
   return [
     {
@@ -204,7 +209,7 @@ export const addPlayer = ({
         { label: "XXXL", value: "xxxl" },
       ],
     },
-     {
+    {
       id: 7,
       error: error?.tshirtName,
       type: "text",
@@ -214,7 +219,7 @@ export const addPlayer = ({
       value: tshirtName,
       onChange: onChangeField,
     },
-     {
+    {
       id: 8,
       error: error?.tshirtNumber,
       type: "number",
@@ -222,6 +227,30 @@ export const addPlayer = ({
       label: "Tshirt Number",
       placeholder: "Number as per on your t-shirt",
       value: tshirtNumber,
+      onChange: onChangeField,
+    },
+  ];
+};
+
+export const addTeam = ({ error, teamPhoto, teamName, onChangeField }) => {
+  return [
+    {
+      id: 1,
+      error: error?.teamPhoto,
+      type: "file",
+      name: "teamPhoto",
+      label: "Team Logo",
+      value: teamPhoto,
+      onChange: onChangeField,
+    },
+    {
+      id: 2,
+      error: error?.teamName,
+      type: "text",
+      name: "teamName",
+      label: "Team Name",
+      placeholder: "Write team name",
+      value: teamName,
       onChange: onChangeField,
     },
   ];

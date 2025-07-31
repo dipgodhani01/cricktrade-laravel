@@ -15,4 +15,6 @@
   trouserSize:"Select trouser size",
   tshirtName:"Enter name as per on your t-shirt",
   tshirtNumber:"Enter number as per on your t-shirt",
+  teamLogo:"Team logo required!",
+  teamName:"Team name required!",
 };

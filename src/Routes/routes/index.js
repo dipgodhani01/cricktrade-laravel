@@ -80,4 +80,26 @@ export const DashboardRoutesPath = [
     ),
     meta: { authRoute: true },
   },
+
+   {
+    path: "/teams/:auctionId",
+    component: lazy(() =>
+      import("../../components/dashboard/team/TeamList")
+    ),
+    meta: { authRoute: true },
+  },
+  { 
+    path: "/create-team/:auctionId",
+    component: lazy(() =>
+      import("../../components/dashboard/team/CreateTeam")
+    ),
+    meta: { authRoute: true },
+  },
+  {
+    path: "/edit-team/:teamId",
+    component: lazy(() =>
+      import("../../components/dashboard/team/EditTeam")
+    ),
+    meta: { authRoute: true },
+  },
 ];

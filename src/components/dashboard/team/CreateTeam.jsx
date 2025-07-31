@@ -1,33 +1,33 @@
-import { useState } from "react";
-import { addAuction } from "../../../data/allMapingData";
+import { useNavigate, useParams } from "react-router-dom";
+import { addPlayer, addTeam } from "../../../data/allMapingData";
 import Formfields from "../../common/Formfields";
-import { EnglishConstant } from "../../../messages/message";
-import { useDispatch, useSelector } from "react-redux";
-import { createAuction } from "../../../redux/slice/auctionSlice";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { createPlayer } from "../../../redux/slice/playerSlice";
 import { toast } from "react-toastify";
-import { initialAuctionData } from "../../../data/initialState";
+import { useDispatch, useSelector } from "react-redux";
+import { EnglishConstant } from "../../../messages/message";
 import Loader3 from "../../common/Loader3";
+import { createTeam } from "../../../redux/slice/teamSlice";
 
-function CreateAuction() {
+function CreateTeam() {
   const [imagePreview, setImagePreview] = useState(null);
-  const [formData, setFormData] = useState(initialAuctionData);
-  const user_id = useSelector((state) => state.user.user.user_id);
-  const { loading } = useSelector((state) => state.auctions);
+  const [formData, setFormData] = useState({
+    teamPhoto: null,
+    teamName: "",
+  });
+  const [error, setError] = useState({
+    teamPhoto: null,
+    teamName: "",
+  });
+  const { auctionId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const [error, setError] = useState(
-    Object.keys(initialAuctionData).reduce((acc, key) => {
-      acc[key] = "";
-      return acc;
-    }, {})
-  );
+  const { loading } = useSelector((state) => state.players);
 
   const onChangeField = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
-    if (field === "logo" && value instanceof File) {
+    if (field === "teamPhoto" && value instanceof File) {
       setImagePreview(URL.createObjectURL(value));
     }
 
@@ -58,18 +58,12 @@ function CreateAuction() {
 
     if (!hasError) {
       const data = new FormData();
-      data.append("user_id", user_id);
-      data.append("auction_logo", formData.logo);
-      data.append("auction_name", formData.name);
-      data.append("auction_date", formData.date);
-      data.append("sports_type", formData.typeOfSports);
-      data.append("point_perteam", formData.pointPerTeam);
-      data.append("minimum_bid", formData.minimumBid);
-      data.append("bid_increment", formData.bidIncrement);
-      data.append("player_perteam", formData.playersPerTeam);
+      data.append("auction_id", auctionId);
+      data.append("team_logo", formData.teamPhoto);
+      data.append("team_name", formData.teamName);
 
       try {
-        await dispatch(createAuction(data)).unwrap();
+        await dispatch(createTeam(data)).unwrap();
         navigate(-1);
       } catch (err) {
         toast.error(err);
@@ -90,7 +84,7 @@ function CreateAuction() {
               />
             </div>
           )}
-          {addAuction({ ...formData, error, onChangeField }).map((item) => (
+          {addTeam({ ...formData, error, onChangeField }).map((item) => (
             <Formfields
               key={item.id}
               type={item.type}
@@ -114,9 +108,9 @@ function CreateAuction() {
         <div className="mt-4">
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
-            {!loading ? "Add Auction" : <Loader3 />}
+            {!loading ? "Add Team" : <Loader3 />}
           </button>
         </div>
       </form>
@@ -124,4 +118,4 @@ function CreateAuction() {
   );
 }
 
-export default CreateAuction;
+export default CreateTeam;

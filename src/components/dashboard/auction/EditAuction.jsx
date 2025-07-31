@@ -94,8 +94,6 @@ function EditAuction() {
         toast.success("Auction updated successfully!");
         navigate(-1);
       } catch (err) {
-        console.log(err);
-
         toast.error(err);
       }
     }

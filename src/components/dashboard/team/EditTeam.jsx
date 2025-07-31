@@ -1,33 +1,46 @@
-import { useState } from "react";
-import { addAuction } from "../../../data/allMapingData";
-import Formfields from "../../common/Formfields";
-import { EnglishConstant } from "../../../messages/message";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createAuction } from "../../../redux/slice/auctionSlice";
-import { useNavigate } from "react-router-dom";
+import { getTeamById, updateTeam } from "../../../redux/slice/teamSlice";
+import { useNavigate, useParams } from "react-router-dom";
+import { EnglishConstant } from "../../../messages/message";
 import { toast } from "react-toastify";
-import { initialAuctionData } from "../../../data/initialState";
-import Loader3 from "../../common/Loader3";
+import { addTeam } from "../../../data/allMapingData";
+import Formfields from "../../common/Formfields";
 
-function CreateAuction() {
+function EditTeam() {
   const [imagePreview, setImagePreview] = useState(null);
-  const [formData, setFormData] = useState(initialAuctionData);
-  const user_id = useSelector((state) => state.user.user.user_id);
-  const { loading } = useSelector((state) => state.auctions);
+  const [formData, setFormData] = useState({
+    teamPhoto: null,
+    teamName: "",
+  });
+  const [error, setError] = useState({
+    teamPhoto: null,
+    teamName: "",
+  });
+  const { teamId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { selectedTeam, loading } = useSelector((state) => state.teams);
 
-  const [error, setError] = useState(
-    Object.keys(initialAuctionData).reduce((acc, key) => {
-      acc[key] = "";
-      return acc;
-    }, {})
-  );
+  useEffect(() => {
+    dispatch(getTeamById(teamId));
+  }, [teamId, dispatch]);
+
+  useEffect(() => {
+    if (selectedTeam) {
+      setFormData({
+        teamPhoto: null,
+        teamName: selectedTeam?.team_name || "",
+      });
+
+      setImagePreview(selectedTeam?.team_logo || null);
+    }
+  }, [selectedTeam]);
 
   const onChangeField = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
-    if (field === "logo" && value instanceof File) {
+    if (field === "teamPhoto" && value instanceof File) {
       setImagePreview(URL.createObjectURL(value));
     }
 
@@ -46,30 +59,33 @@ function CreateAuction() {
 
     const newError = {};
     let hasError = false;
+
     Object.keys(formData).forEach((key) => {
-      if (formData[key] === "" || formData[key] === null) {
+      if (
+        key !== "teamPhoto" &&
+        (formData[key] === "" || formData[key] === null)
+      ) {
         newError[key] = EnglishConstant[key] || "Required";
         hasError = true;
       } else {
         newError[key] = "";
       }
     });
+
     setError(newError);
 
     if (!hasError) {
       const data = new FormData();
-      data.append("user_id", user_id);
-      data.append("auction_logo", formData.logo);
-      data.append("auction_name", formData.name);
-      data.append("auction_date", formData.date);
-      data.append("sports_type", formData.typeOfSports);
-      data.append("point_perteam", formData.pointPerTeam);
-      data.append("minimum_bid", formData.minimumBid);
-      data.append("bid_increment", formData.bidIncrement);
-      data.append("player_perteam", formData.playersPerTeam);
+      data.append("team_id", teamId);
+      if (formData.teamPhoto) {
+        data.append("team_logo", formData.teamPhoto);
+      }
+      data.append("_method", "PUT");
+      data.append("team_name", formData.teamName);
 
       try {
-        await dispatch(createAuction(data)).unwrap();
+        await dispatch(updateTeam(data)).unwrap();
+        toast.success("Team updated successfully!");
         navigate(-1);
       } catch (err) {
         toast.error(err);
@@ -79,6 +95,7 @@ function CreateAuction() {
 
   return (
     <div className="p-4 bg-white rounded shadow">
+      <h2 className="text-xl font-semibold mb-4">Edit Team</h2>
       <form onSubmit={onFormSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {imagePreview && (
@@ -90,7 +107,7 @@ function CreateAuction() {
               />
             </div>
           )}
-          {addAuction({ ...formData, error, onChangeField }).map((item) => (
+          {addTeam({ ...formData, error, onChangeField }).map((item) => (
             <Formfields
               key={item.id}
               type={item.type}
@@ -114,9 +131,9 @@ function CreateAuction() {
         <div className="mt-4">
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
           >
-            {!loading ? "Add Auction" : <Loader3 />}
+            {!loading ? "Update Team" : <Loader3 />}
           </button>
         </div>
       </form>
@@ -124,4 +141,4 @@ function CreateAuction() {
   );
 }
 
-export default CreateAuction;
+export default EditTeam;

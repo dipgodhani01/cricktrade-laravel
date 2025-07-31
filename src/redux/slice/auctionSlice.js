@@ -50,36 +50,31 @@ export const getAuctionById = createAsyncThunk(
   }
 );
 
+export const updateAuction = createAsyncThunk(
+  "auctions/updateAuction",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await updateAuctionApi(formData);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message);
+    }
+  }
+);
+
 export const deleteAuction = createAsyncThunk(
   "auctions/deleteAuction",
-  async ({ auctionId }, { rejectWithValue, dispatch, getState }) => {
+  async ({ auctionId }, { rejectWithValue }) => {
     try {
       const response = await deleteAuctionApi(auctionId);
-      const userId = getState().user.user.user_id;
-      dispatch(getUserAuctions(userId));
       toast.success(response.data.message);
-      return response.data.data;
+      return response.data.data.id;
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong");
       return rejectWithValue(error.response?.data?.message);
     }
   }
 );
-
-export const updateAuction = createAsyncThunk(
-  "auctions/updateAuction",
-  async (formData, { rejectWithValue, dispatch ,getState }) => {
-    try {
-      const response = await updateAuctionApi(formData);
-      const userId = getState().user.user.user_id;
-      dispatch(getUserAuctions(userId));
-      return response.data.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data?.message);
-    }
-  }
-);
-
 
 const auctionSlice = createSlice({
   name: "auctions",
@@ -120,22 +115,31 @@ const auctionSlice = createSlice({
       .addCase(getAuctionById.rejected, (state) => {
         state.loading = false;
       })
-      .addCase(deleteAuction.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(deleteAuction.fulfilled, (state) => {
-        state.loading = false;
-      })
-      .addCase(deleteAuction.rejected, (state) => {
-        state.loading = false;
-      })
       .addCase(updateAuction.pending, (state) => {
         state.loading = true;
       })
-      .addCase(updateAuction.fulfilled, (state) => {
+      .addCase(updateAuction.fulfilled, (state, action) => {
         state.loading = false;
+        const updatedAuction = action.payload;
+        const index = state.auctions.findIndex(
+          (p) => p.id === updatedAuction.id
+        );
+        if (index !== -1) {
+          state.auctions[index] = updatedAuction;
+        }
       })
       .addCase(updateAuction.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(deleteAuction.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteAuction.fulfilled, (state, action) => {
+        state.loading = false;
+        const deleteAuctionId = action.payload;
+        state.auctions = state.auctions.filter((p) => p.id !== deleteAuctionId);
+      })
+      .addCase(deleteAuction.rejected, (state) => {
         state.loading = false;
       });
   },
