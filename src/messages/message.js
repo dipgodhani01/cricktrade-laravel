@@ -7,4 +7,12 @@
   minimumBid: "Minimum bid amount is required!",
   bidIncrement: "Bid increment value is required!",
   playersPerTeam: "Number of players per team is required!",
+  playerPhoto:"Please upload player photo!",
+  playerName:"Player name required!",
+  sportCategory:"Select sports category",
+  phone:"Enter player phone number",
+  tshirtSize:"Select t-shirt size",
+  trouserSize:"Select trouser size",
+  tshirtName:"Enter name as per on your t-shirt",
+  tshirtNumber:"Enter number as per on your t-shirt",
 };

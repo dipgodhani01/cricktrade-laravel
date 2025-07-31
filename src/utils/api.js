@@ -29,3 +29,17 @@ export const updateAuctionApi = (formData) => {
 
 export const createPlayerApi = (formData) =>
   api.post("/api/player/create-player", formData);
+export const getAllPlayersApi = (auction_id) =>
+  api.get(`/api/player/get/all?auction_id=${auction_id}`);
+export const getPlayerByIdApi = (playerId) => {
+  return api.get(`/api/player/get-one/${playerId}`);
+};  
+export const updatePlayerApi = (formData) => {
+  return api.post(`/api/player/update`,formData);
+};
+export const updateMinimumBidApi = (formData) => {
+  return api.post(`/api/player/update/minimum_bid?playerId`,formData);
+};
+export const deletePlayerApi = (playerId) => {
+  return api.delete(`/api/player/delete/${playerId}`);
+};

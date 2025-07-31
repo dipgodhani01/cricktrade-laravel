@@ -66,10 +66,17 @@ export const DashboardRoutesPath = [
     ),
     meta: { authRoute: true },
   },
-  {
+  { 
     path: "/create-player/:auctionId",
     component: lazy(() =>
       import("../../components/dashboard/player/CreatePlayer")
+    ),
+    meta: { authRoute: true },
+  },
+  {
+    path: "/edit-player/:playerId",
+    component: lazy(() =>
+      import("../../components/dashboard/player/EditPlayer")
     ),
     meta: { authRoute: true },
   },

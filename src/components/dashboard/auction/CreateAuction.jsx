@@ -6,27 +6,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { createAuction } from "../../../redux/slice/auctionSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
-const initialFormData = {
-  logo: null,
-  name: "",
-  date: "",
-  typeOfSports: "",
-  pointPerTeam: "",
-  minimumBid: "",
-  bidIncrement: "",
-  playersPerTeam: "",
-};
+import { initialAuctionData } from "../../../data/initialState";
 
 function CreateAuction() {
   const [imagePreview, setImagePreview] = useState(null);
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState(initialAuctionData);
   const user_id = useSelector((state) => state.user.user.user_id);
+  const { loading } = useSelector((state) => state.auctions);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [error, setError] = useState(
-    Object.keys(initialFormData).reduce((acc, key) => {
+    Object.keys(initialAuctionData).reduce((acc, key) => {
       acc[key] = "";
       return acc;
     }, {})
@@ -124,7 +115,14 @@ function CreateAuction() {
             type="submit"
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
-            Create Auction
+            {!loading ? (
+              "Add Auction"
+            ) : (
+              <div className="text-white flex justify-center items-center font-medium text-xl">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                &nbsp;
+              </div>
+            )}
           </button>
         </div>
       </form>

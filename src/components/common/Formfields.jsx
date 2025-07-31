@@ -65,7 +65,10 @@ function Formfields({
   return (
     <div className="mb-1">
       {label && (
-        <label htmlFor={name} className="block font-medium text-gray-700 mb-1">
+        <label
+          htmlFor={name}
+          className="block font-medium text-gray-700 mb-1 text-start"
+        >
           {label}
         </label>
       )}
@@ -74,7 +77,7 @@ function Formfields({
         {extraComponent && (
           <div className="absolute top-2 right-2">{extraComponent}</div>
         )}
-        {error && <p className="text-red-600 mt-1 text-sm">{error}</p>}
+        {error && <p className="text-red-600 mt-1 text-start">{error}</p>}
       </div>
     </div>
   );

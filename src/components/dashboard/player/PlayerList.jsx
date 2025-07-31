@@ -1,19 +1,72 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { playerListTableHeader } from "../../../data/allMapingData";
 import { useNavigate, useParams } from "react-router-dom";
 import Loader2 from "../../common/Loader2";
-import { MdEdit } from "react-icons/md";
+import { MdCurrencyRupee, MdDelete, MdEdit } from "react-icons/md";
+import {
+  deletePlayer,
+  getAllPlayers,
+  updateMinimumBid,
+} from "../../../redux/slice/playerSlice";
+import Formfields from "../../common/Formfields";
+import { EnglishConstant } from "../../../messages/message";
+import { toast } from "react-toastify";
 
 function PlayerList() {
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [selectedPlayerId, setSelectedPlayerId] = useState("");
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [minBid, setMinBid] = useState(false);
+  const [error, setError] = useState({});
   const { players, loading } = useSelector((state) => state.players);
-  const showTrouserSize = players?.some((player) => player.trouser_size);
   const { auctionId } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  if (showTrouserSize) {
-    playerListTableHeader.push("Trouser Size");
+  function confirmDelete(playerId) {
+    setSelectedPlayerId(playerId);
+    setShowConfirmModal(true);
   }
+
+  function handleDeletePlayerConfirmed() {
+    if (selectedPlayerId) {
+      dispatch(deletePlayer({ playerId: selectedPlayerId }));
+      setShowConfirmModal(false);
+      setSelectedPlayerId("");
+    }
+  }
+  function onChangeField(name, value) {
+    if (name === "minimumBid") {
+      setMinBid(value);
+      setError({});
+    }
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    if (minBid === "") {
+      setError({ minimumBid: EnglishConstant.minimumBid });
+      return;
+    }
+    const data = new FormData();
+    data.append("player_id", selectedPlayerId);
+    data.append("_method", "PUT");
+    data.append("minimum_bid", minBid);
+
+    try {
+      setShowUpdateModal(false);
+      await dispatch(updateMinimumBid(data)).unwrap();
+      toast.success("Minimum bid updated successfully!");
+    } catch (err) {
+      toast.error(err);
+    }
+  }
+
+  useEffect(() => {
+    dispatch(getAllPlayers(auctionId));
+  }, [auctionId]);
 
   return (
     <div>
@@ -33,7 +86,7 @@ function PlayerList() {
         ) : (
           <div className="mt-4 overflow-x-auto table-responsive">
             {players && players.length > 0 ? (
-              <table className="border-collapse w-full border mb-3 min-w-[1120px] border-black">
+              <table className="border-collapse w-full border mb-3 min-w-[1180px] border-black">
                 <thead className="bg-gray-100">
                   <tr>
                     {playerListTableHeader?.map((li, i) => {
@@ -56,9 +109,30 @@ function PlayerList() {
                           <div className="flex gap-2 text-blue-800">
                             <button
                               className="bg-gray-100 hover:bg-gray-200 transition h-8 w-8 flex items-center justify-center rounded-full"
-                              title="Edit Auction"
+                              title="Edit Player"
+                              onClick={() =>
+                                navigate(`/edit-player/${data.id}`)
+                              }
                             >
                               <MdEdit size={20} />
+                            </button>
+                            <button
+                              className="bg-gray-100 hover:bg-gray-200 transition h-8 w-8 flex items-center justify-center rounded-full"
+                              title="Delete Player"
+                              onClick={() => confirmDelete(data.id)}
+                            >
+                              <MdDelete size={20} />
+                            </button>
+                            <button
+                              className="bg-gray-100 hover:bg-gray-200 transition h-8 w-8 flex items-center justify-center rounded-full"
+                              title="Edit Auction"
+                              onClick={() => {
+                                setSelectedPlayerId(data.id);
+                                setMinBid(data.minimum_bid);
+                                setShowUpdateModal(true);
+                              }}
+                            >
+                              <MdCurrencyRupee size={20} />
                             </button>
                           </div>
                         </td>
@@ -72,16 +146,14 @@ function PlayerList() {
                           {data.category}
                         </td>
                         <td className="border border-gray-200 px-4 py-2">
-                          +91 {formatIndianNumber(data.phone)}
+                          {data.phone}
                         </td>
-                        <td className="border border-gray-200 px-4 py-2">
+                        <td className="border border-gray-200 px-4 py-2 uppercase">
                           {data.tshirt_size}
                         </td>
-                        {showTrouserSize && (
-                          <td className="border border-gray-200 px-4 py-2">
-                            {data.trouser_size || "-"}
-                          </td>
-                        )}
+                        <td className="border border-gray-200 px-4 py-2 uppercase">
+                          {data.trouser_size || "-"}
+                        </td>
                         <td className="border border-gray-200 px-4 py-2">
                           {data.tshirt_name}
                         </td>
@@ -102,7 +174,7 @@ function PlayerList() {
         )}
       </div>
 
-      {/* {showConfirmModal && (
+      {showConfirmModal && !showUpdateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded shadow-md text-center w-[90%] max-w-md">
             <h3 className="text-2xl font-medium mb-4">
@@ -111,7 +183,7 @@ function PlayerList() {
             <div className="flex justify-end gap-4 pt-2">
               <button
                 className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 min-w-20 rounded"
-                onClick={handleDeleteAuctionConfirmed}
+                onClick={handleDeletePlayerConfirmed}
               >
                 Yes
               </button>
@@ -124,7 +196,44 @@ function PlayerList() {
             </div>
           </div>
         </div>
-      )} */}
+      )}
+
+      {showUpdateModal && !showConfirmModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000]">
+          <div className="bg-white p-6 rounded shadow-md text-center w-[90%] max-w-md">
+            <h3 className="text-2xl font-medium mb-4">
+              Change Player's Minimum Bid Price
+            </h3>
+            <form onSubmit={handleSubmit}>
+              <div>
+                <Formfields
+                  type="text"
+                  label="Minimum Bid"
+                  placeholder="Enter minimum bid price"
+                  name="minimumBid"
+                  value={minBid}
+                  onChange={(e) => onChangeField("minimumBid", e.target.value)}
+                  error={error.minimumBid}
+                />
+              </div>
+              <div className="flex justify-end gap-4 pt-2">
+                <button
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 min-w-20 rounded"
+                  type="submit"
+                >
+                  Update
+                </button>
+                <button
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 min-w-20 rounded"
+                  onClick={() => setShowUpdateModal(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

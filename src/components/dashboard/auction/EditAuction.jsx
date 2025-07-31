@@ -8,18 +8,10 @@ import {
 import Formfields from "../../common/Formfields";
 import { addAuction } from "../../../data/allMapingData";
 import { toast } from "react-toastify";
+import { initialAuctionData } from "../../../data/initialState";
 
 function EditAuction() {
-  const [formData, setFormData] = useState({
-    logo: null,
-    name: "",
-    date: "",
-    typeOfSports: "",
-    pointPerTeam: "",
-    minimumBid: "",
-    bidIncrement: "",
-    playersPerTeam: "",
-  });
+  const [formData, setFormData] = useState(initialAuctionData);
   const [imagePreview, setImagePreview] = useState(null);
   const [error, setError] = useState({});
   const { auctionId } = useParams();

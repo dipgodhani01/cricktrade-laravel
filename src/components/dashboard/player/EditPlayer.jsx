@@ -1,25 +1,41 @@
-import { useNavigate, useParams } from "react-router-dom";
-import { addPlayer } from "../../../data/allMapingData";
-import Formfields from "../../common/Formfields";
-import { useState } from "react";
-import { createPlayer } from "../../../redux/slice/playerSlice";
-import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import Formfields from "../../common/Formfields";
+import { addPlayer } from "../../../data/allMapingData";
+import { toast } from "react-toastify";
 import { initialPlayerData } from "../../../data/initialState";
+import { getPlayerById, updatePlayer } from "../../../redux/slice/playerSlice";
 
-function CreatePlayer() {
-  const [imagePreview, setImagePreview] = useState(null);
+function EditPlayer() {
   const [formData, setFormData] = useState(initialPlayerData);
-  const [error, setError] = useState(
-    Object.keys(initialPlayerData).reduce((acc, key) => {
-      acc[key] = "";
-      return acc;
-    }, {})
-  );
-  const { auctionId } = useParams();
+  const [imagePreview, setImagePreview] = useState(null);
+  const [error, setError] = useState({});
+  const { playerId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading } = useSelector((state) => state.players);
+  const { selectedPlayer, loading } = useSelector((state) => state.players);
+
+  useEffect(() => {
+    dispatch(getPlayerById(playerId));
+  }, [playerId, dispatch]);
+
+  useEffect(() => {
+    if (selectedPlayer) {
+      setFormData({
+        playerPhoto: null,
+        playerName: selectedPlayer?.player_name || "",
+        sportCategory: selectedPlayer?.category || "",
+        phone: selectedPlayer?.phone || "",
+        tshirtSize: selectedPlayer?.tshirt_size || "",
+        trouserSize: selectedPlayer?.trouser_size || "",
+        tshirtName: selectedPlayer?.tshirt_name || "",
+        tshirtNumber: selectedPlayer?.tshirt_number || "",
+      });
+
+      setImagePreview(selectedPlayer?.player_logo || null);
+    }
+  }, [selectedPlayer]);
 
   const onChangeField = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -43,20 +59,28 @@ function CreatePlayer() {
 
     const newError = {};
     let hasError = false;
+
     Object.keys(formData).forEach((key) => {
-      if (formData[key] === "" || formData[key] === null) {
+      if (
+        key !== "playerPhoto" &&
+        (formData[key] === "" || formData[key] === null)
+      ) {
         newError[key] = EnglishConstant[key] || "Required";
         hasError = true;
       } else {
         newError[key] = "";
       }
     });
+
     setError(newError);
 
     if (!hasError) {
       const data = new FormData();
-      data.append("auction_id", auctionId);
-      data.append("player_logo", formData.playerPhoto);
+      data.append("player_id", playerId);
+      if (formData.logo) {
+        data.append("player_logo", formData.playerPhoto);
+      }
+      data.append("_method", "PUT");
       data.append("player_name", formData.playerName);
       data.append("category", formData.sportCategory);
       data.append("phone", formData.phone);
@@ -66,7 +90,8 @@ function CreatePlayer() {
       data.append("tshirt_number", formData.tshirtNumber);
 
       try {
-        await dispatch(createPlayer(data)).unwrap();
+        await dispatch(updatePlayer(data)).unwrap();
+        toast.success("Player updated successfully!");
         navigate(-1);
       } catch (err) {
         toast.error(err);
@@ -76,6 +101,7 @@ function CreatePlayer() {
 
   return (
     <div className="p-4 bg-white rounded shadow">
+      <h2 className="text-xl font-semibold mb-4">Edit Player</h2>
       <form onSubmit={onFormSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {imagePreview && (
@@ -111,16 +137,9 @@ function CreatePlayer() {
         <div className="mt-4">
           <button
             type="submit"
-            className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
           >
-            {!loading ? (
-              "Add Player"
-            ) : (
-              <div className="text-white flex justify-center items-center font-medium text-xl">
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                &nbsp;
-              </div>
-            )}
+            Update Player
           </button>
         </div>
       </form>
@@ -128,4 +147,4 @@ function CreatePlayer() {
   );
 }
 
-export default CreatePlayer;
+export default EditPlayer;

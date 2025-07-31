@@ -1,7 +1,14 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { createPlayerApi } from "../../utils/api";
+import {
+  createPlayerApi,
+  deletePlayerApi,
+  getAllPlayersApi,
+  getPlayerByIdApi,
+  updateMinimumBidApi,
+  updatePlayerApi,
+} from "../../utils/api";
 
 axios.defaults.withCredentials = true;
 
@@ -17,69 +24,76 @@ export const createPlayer = createAsyncThunk(
   }
 );
 
-// export const getUserAuctions = createAsyncThunk(
-//   "players/getUserAuctions",
-//   async (userId, { rejectWithValue }) => {
-//     try {
-//       const response = await getUserAuctionsApi(userId);
-//       return response.data.data;
-//     } catch (error) {
-//       return rejectWithValue(
-//         error.response?.data?.message || "Something went wrong"
-//       );
-//     }
-//   }
-// );
-// export const getAuctionById = createAsyncThunk(
-//   "players/getAuctionById",
-//   async (auctionId, { rejectWithValue }) => {
-//     try {
-//       const response = await getAuctionByIdApi(auctionId);
-//       return response.data.data;
-//     } catch (error) {
-//       return rejectWithValue(
-//         error.response?.data?.message || "Something went wrong"
-//       );
-//     }
-//   }
-// );
+export const getAllPlayers = createAsyncThunk(
+  "players/getAllPlayers",
+  async (auctionId, { rejectWithValue }) => {
+    try {
+      const response = await getAllPlayersApi(auctionId);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
+    }
+  }
+);
+export const getPlayerById = createAsyncThunk(
+  "players/getPlayerById",
+  async (playerId, { rejectWithValue }) => {
+    try {
+      const response = await getPlayerByIdApi(playerId);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
+    }
+  }
+);
 
-// export const deleteAuction = createAsyncThunk(
-//   "players/deleteAuction",
-//   async ({ auctionId }, { rejectWithValue, dispatch, getState }) => {
-//     try {
-//       const response = await deleteAuctionApi(auctionId);
-//       const userId = getState().user.user.user_id;
-//       dispatch(getUserAuctions(userId));
-//       toast.success(response.data.message);
-//       return response.data.data;
-//     } catch (error) {
-//       toast.error(error.response?.data?.message || "Something went wrong");
-//       return rejectWithValue(error.response?.data?.message);
-//     }
-//   }
-// );
+export const updatePlayer = createAsyncThunk(
+  "players/updatePlayer",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await updatePlayerApi(formData);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message);
+    }
+  }
+);
+export const updateMinimumBid = createAsyncThunk(
+  "players/updateMinimumBid",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await updateMinimumBidApi(formData);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message);
+    }
+  }
+);
 
-// export const updateAuction = createAsyncThunk(
-//   "players/updateAuction",
-//   async (formData, { rejectWithValue, dispatch ,getState }) => {
-//     try {
-//       const response = await updateAuctionApi(formData);
-//       const userId = getState().user.user.user_id;
-//       dispatch(getUserAuctions(userId));
-//       return response.data.data;
-//     } catch (error) {
-//       return rejectWithValue(error.response?.data?.message);
-//     }
-//   }
-// );
+export const deletePlayer = createAsyncThunk(
+  "players/deletePlayer",
+  async ({ playerId }, { rejectWithValue }) => {
+    try {
+      const response = await deletePlayerApi(playerId);
+      toast.success(response.data.message);      
+      return response.data.data.id;
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+      return rejectWithValue(error.response?.data?.message);
+    }
+  }
+);
 
 const playerSlice = createSlice({
   name: "players",
   initialState: {
     loading: false,
     players: [],
-    // selectedAuction: null,
+    selectedPlayer: null,
   },
 
   extraReducers: (builder) => {
@@ -92,45 +106,65 @@ const playerSlice = createSlice({
       })
       .addCase(createPlayer.rejected, (state) => {
         state.loading = false;
+      })
+      .addCase(getAllPlayers.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getAllPlayers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.players = action.payload;
+      })
+      .addCase(getAllPlayers.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(getPlayerById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getPlayerById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedPlayer = action.payload;
+      })
+      .addCase(getPlayerById.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(updatePlayer.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updatePlayer.fulfilled, (state, action) => {
+        state.loading = false;
+        const updatedPlayer = action.payload;
+        const index = state.players.findIndex((p) => p.id === updatedPlayer.id);
+        if (index !== -1) {
+          state.players[index] = updatedPlayer;
+        }
+      })
+      .addCase(updatePlayer.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(updateMinimumBid.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateMinimumBid.fulfilled, (state, action) => {
+        state.loading = false;
+        const updatedPlayer = action.payload;
+        const index = state.players.findIndex((p) => p.id === updatedPlayer.id);
+        if (index !== -1) {
+          state.players[index] = updatedPlayer;
+        }
+      })
+
+      .addCase(updateMinimumBid.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(deletePlayer.fulfilled, (state, action) => {
+        state.loading = false;
+        const deletedPlayerId = action.payload;
+        state.players = state.players.filter((p) => p.id !== deletedPlayerId);
+      })
+
+      .addCase(deletePlayer.rejected, (state) => {
+        state.loading = false;
       });
-    //   .addCase(getUserAuctions.pending, (state) => {
-    //     state.loading = true;
-    //   })
-    //   .addCase(getUserAuctions.fulfilled, (state, action) => {
-    //     state.loading = false;
-    //     state.auctions = action.payload;
-    //   })
-    //   .addCase(getUserAuctions.rejected, (state) => {
-    //     state.loading = false;
-    //   })
-    //   .addCase(getAuctionById.pending, (state) => {
-    //     state.loading = true;
-    //   })
-    //   .addCase(getAuctionById.fulfilled, (state, action) => {
-    //     state.loading = false;
-    //     state.selectedAuction = action.payload;
-    //   })
-    //   .addCase(getAuctionById.rejected, (state) => {
-    //     state.loading = false;
-    //   })
-    //   .addCase(deleteAuction.pending, (state) => {
-    //     state.loading = true;
-    //   })
-    //   .addCase(deleteAuction.fulfilled, (state) => {
-    //     state.loading = false;
-    //   })
-    //   .addCase(deleteAuction.rejected, (state) => {
-    //     state.loading = false;
-    //   })
-    //   .addCase(updateAuction.pending, (state) => {
-    //     state.loading = true;
-    //   })
-    //   .addCase(updateAuction.fulfilled, (state) => {
-    //     state.loading = false;
-    //   })
-    //   .addCase(updateAuction.rejected, (state) => {
-    //     state.loading = false;
-    //   });
   },
 });
 
