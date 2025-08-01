@@ -117,11 +117,7 @@ export const playerListTableHeader = [
   "Tshirt Name",
   "Tshirt Number",
 ];
-export const teamListTableHeader = [
-  "Actions",
-  "Team Logo",
-  "Team Name",
-];
+export const teamListTableHeader = ["Actions", "Team Logo", "Team Name"];
 
 export const addPlayer = ({
   error,
@@ -163,7 +159,12 @@ export const addPlayer = ({
       label: "Sports category",
       value: sportCategory,
       onChange: onChangeField,
-      options: [{ label: "Cricket", value: "cricket" }],
+      options: [
+        { label: "Batsman", value: "batsman" },
+        { label: "Bowler", value: "bowler" },
+        { label: "All-Rounder", value: "allRounder" },
+        { label: "Wicketkeeper-Batsman", value: "wicketkeeper" },
+      ],
     },
     {
       id: 4,
