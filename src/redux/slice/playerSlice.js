@@ -28,7 +28,7 @@ export const getAllPlayers = createAsyncThunk(
   "players/getAllPlayers",
   async (auctionId, { rejectWithValue }) => {
     try {
-      const response = await getAllPlayersApi(auctionId);
+      const response = await getAllPlayersApi(auctionId);      
       return response.data.data;
     } catch (error) {
       return rejectWithValue(

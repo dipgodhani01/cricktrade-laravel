@@ -1,28 +1,38 @@
-import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  useLocation,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
 import PageNotFound from "../pages/PageNotFound";
 import Layout from "../layouts/Layout";
-import { DashboardRoutesPath, HomeRoutesPath } from "./routes";
+import {
+  AuctionRoutesPath,
+  DashboardRoutesPath,
+  HomeRoutesPath,
+} from "./routes";
 import DashboardLayout from "../components/dashboard/DashboardLayout";
+import { useEffect } from "react";
+
+// ✅ FinalRoute as a Component
+const FinalRoute = ({ route }) => {
+  const token = localStorage.getItem("cricktrade-usertoken");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (token === null && route?.meta?.authRoute) {
+      navigate("/home", { replace: true });
+    }
+  }, [token, route, navigate]);
+
+  if (token === null && route?.meta?.authRoute) return null;
+
+  const Component = route.component;
+  return <Component />;
+};
 
 const Router = () => {
-  const location = useLocation();
-  const token = localStorage.getItem("cricktrade-usertoken");
-
-  const FinalRoute = (props) => {
-    const route = props?.route;
-    if (token === null && route?.meta?.authRoute) {
-      return (
-        <Navigate
-          to="/home"
-          replace={true}
-          state={{ path: location?.pathname }}
-        />
-      );
-    } else {
-      return <route.component {...props} />;
-    }
-  };
-
   return (
     <Routes>
       <Route element={<Layout />}>
@@ -43,7 +53,14 @@ const Router = () => {
           />
         ))}
       </Route>
-      <Route exact path="*" element={<PageNotFound />} />
+      {AuctionRoutesPath.map((route, index) => (
+        <Route
+          key={index}
+          path={route.path}
+          element={<FinalRoute route={route} />}
+        />
+      ))}
+      <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };

@@ -9,6 +9,7 @@ import Formfields from "../../common/Formfields";
 import { addAuction } from "../../../data/allMapingData";
 import { toast } from "react-toastify";
 import { initialAuctionData } from "../../../data/initialState";
+import { EnglishConstant } from "../../../messages/message";
 
 function EditAuction() {
   const [formData, setFormData] = useState(initialAuctionData);
@@ -72,7 +73,17 @@ function EditAuction() {
       }
     });
 
-    setError(newError);
+    const today = new Date();
+    const auctionDate = new Date(formData.date);
+    today.setHours(0, 0, 0, 0);
+
+    if (auctionDate <= today) {
+      setError((prev) => ({
+        ...prev,
+        date: "Auction cannot be scheduled for today or a past date.",
+      }));
+      return;
+    }
 
     if (!hasError) {
       const data = new FormData();

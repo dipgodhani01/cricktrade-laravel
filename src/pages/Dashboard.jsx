@@ -102,9 +102,7 @@ function Dashboard() {
                             </button>
                             <button
                               className="bg-gray-100 hover:bg-gray-200 transition h-8 w-8 flex items-center justify-center rounded-full"
-                              // onClick={() =>
-                              //   navigate(`/auction-dashboard/${data._id}`)
-                              // }
+                              onClick={() => navigate(`/auction/${data.id}`)}
                               title="Auction Dashboard"
                             >
                               <MdDashboard size={16} />

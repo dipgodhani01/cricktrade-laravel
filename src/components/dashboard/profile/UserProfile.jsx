@@ -8,7 +8,7 @@ function UserProfile() {
       <h2 className="text-2xl font-medium">Profile</h2>
       <div className="flex gap-2 mt-4 text-lg">
         <span>Photo : </span>
-        <img src={user?.image} alt="" className="h-16 w-16 rounded mt-2" />
+        <img src={user.image} alt="" className="h-16 w-16 rounded mt-2" />
       </div>
       <div className="mt-2 text-lg">
         <p>

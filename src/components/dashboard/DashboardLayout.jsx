@@ -95,7 +95,7 @@ function DashboardLayout() {
             </li>
             <li className="w-full">
               <Link
-                to="/dashboard/profile"
+                to="/user-profile"
                 className="flex bg-gray-200 p-1.5 w-full rounded hover:bg-blue-500 gap-2 items-center text-lg font-medium transition hover:text-white"
               >
                 <span>

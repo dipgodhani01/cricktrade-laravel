@@ -54,6 +54,15 @@ function CreateAuction() {
         newError[key] = "";
       }
     });
+
+    const selectedDate = new Date(formData.date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDate <= today) {
+      newError.date = "Auction cannot be scheduled for today or a past date.";
+      hasError = true;
+    }
     setError(newError);
 
     if (!hasError) {

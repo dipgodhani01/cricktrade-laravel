@@ -66,7 +66,7 @@ export const DashboardRoutesPath = [
     ),
     meta: { authRoute: true },
   },
-  { 
+  {
     path: "/create-player/:auctionId",
     component: lazy(() =>
       import("../../components/dashboard/player/CreatePlayer")
@@ -81,25 +81,32 @@ export const DashboardRoutesPath = [
     meta: { authRoute: true },
   },
 
-   {
+  {
     path: "/teams/:auctionId",
-    component: lazy(() =>
-      import("../../components/dashboard/team/TeamList")
-    ),
+    component: lazy(() => import("../../components/dashboard/team/TeamList")),
     meta: { authRoute: true },
   },
-  { 
+  {
     path: "/create-team/:auctionId",
-    component: lazy(() =>
-      import("../../components/dashboard/team/CreateTeam")
-    ),
+    component: lazy(() => import("../../components/dashboard/team/CreateTeam")),
     meta: { authRoute: true },
   },
   {
     path: "/edit-team/:teamId",
-    component: lazy(() =>
-      import("../../components/dashboard/team/EditTeam")
-    ),
+    component: lazy(() => import("../../components/dashboard/team/EditTeam")),
+    meta: { authRoute: true },
+  },
+  {
+    path: "/user-profile",
+    component: lazy(() => import("../../components/dashboard/profile/UserProfile")),
+    meta: { authRoute: true },
+  },
+];
+
+export const AuctionRoutesPath = [
+  {
+    path: "/auction/:auctionId",
+    component: lazy(() => import("../../components/auction/Auction")),
     meta: { authRoute: true },
   },
 ];
