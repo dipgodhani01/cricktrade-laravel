@@ -45,6 +45,9 @@ export const updateMinimumBidApi = (formData) => {
 export const deletePlayerApi = (playerId) => {
   return api.delete(`/api/player/delete/${playerId}`);
 };
+export const soldPlayerApi = (formData) => {
+  return api.post(`/api/auction/sold-player`, formData);
+};
 
 // Team
 export const createTeamApi = (formData) =>

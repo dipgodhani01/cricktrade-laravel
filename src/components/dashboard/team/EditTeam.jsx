@@ -6,6 +6,7 @@ import { EnglishConstant } from "../../../messages/message";
 import { toast } from "react-toastify";
 import { addTeam } from "../../../data/allMapingData";
 import Formfields from "../../common/Formfields";
+import Loader3 from "../../common/Loader3";
 
 function EditTeam() {
   const [imagePreview, setImagePreview] = useState(null);

@@ -113,7 +113,7 @@ function Dashboard() {
                           <img
                             src={data?.auction_logo}
                             alt="logo"
-                            className="w-16 h-12 object-cover rounded"
+                            className="w-20 h-16 object-cover rounded"
                           />
                         </td>
                         <td className="border border-gray-200 px-4 py-2">

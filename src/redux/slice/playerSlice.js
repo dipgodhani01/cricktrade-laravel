@@ -6,6 +6,7 @@ import {
   deletePlayerApi,
   getAllPlayersApi,
   getPlayerByIdApi,
+  soldPlayerApi,
   updateMinimumBidApi,
   updatePlayerApi,
 } from "../../utils/api";
@@ -28,7 +29,7 @@ export const getAllPlayers = createAsyncThunk(
   "players/getAllPlayers",
   async (auctionId, { rejectWithValue }) => {
     try {
-      const response = await getAllPlayersApi(auctionId);      
+      const response = await getAllPlayersApi(auctionId);
       return response.data.data;
     } catch (error) {
       return rejectWithValue(
@@ -62,6 +63,7 @@ export const updatePlayer = createAsyncThunk(
     }
   }
 );
+
 export const updateMinimumBid = createAsyncThunk(
   "players/updateMinimumBid",
   async (formData, { rejectWithValue }) => {
@@ -79,10 +81,22 @@ export const deletePlayer = createAsyncThunk(
   async ({ playerId }, { rejectWithValue }) => {
     try {
       const response = await deletePlayerApi(playerId);
-      toast.success(response.data.message);      
+      toast.success(response.data.message);
       return response.data.data.id;
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong");
+      return rejectWithValue(error.response?.data?.message);
+    }
+  }
+);
+
+export const soldPlayer = createAsyncThunk(
+  "players/soldPlayer",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await soldPlayerApi(formData);
+      return response.data.data.player;
+    } catch (error) {
       return rejectWithValue(error.response?.data?.message);
     }
   }
@@ -152,8 +166,18 @@ const playerSlice = createSlice({
           state.players[index] = updatedPlayer;
         }
       })
-
       .addCase(updateMinimumBid.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(soldPlayer.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(soldPlayer.fulfilled, (state, action) => {
+        state.loading = false;
+        const updatedPlayer = action.payload;
+        state.players = state.players.filter((p) => p.id !== updatedPlayer.id);
+      })
+      .addCase(soldPlayer.rejected, (state) => {
         state.loading = false;
       })
       .addCase(deletePlayer.fulfilled, (state, action) => {
@@ -161,7 +185,6 @@ const playerSlice = createSlice({
         const deletedPlayerId = action.payload;
         state.players = state.players.filter((p) => p.id !== deletedPlayerId);
       })
-
       .addCase(deletePlayer.rejected, (state) => {
         state.loading = false;
       });
