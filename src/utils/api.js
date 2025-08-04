@@ -48,6 +48,12 @@ export const deletePlayerApi = (playerId) => {
 export const soldPlayerApi = (formData) => {
   return api.post(`/api/auction/sold-player`, formData);
 };
+export const unsoldPlayerApi = (formData) => {
+  return api.post(`/api/auction/unsold-player`, formData);
+};
+export const unsoldToSoldPlayerApi = (auction_id) => {
+  return api.post(`/api/auction/unsold-to-sold?auction_id=${auction_id}`);
+};
 
 // Team
 export const createTeamApi = (formData) =>

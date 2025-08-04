@@ -4,9 +4,12 @@ import { deleteAuction, getUserAuctions } from "../redux/slice/auctionSlice";
 import { useEffect, useState } from "react";
 import { auctionListTableHeader } from "../data/allMapingData";
 import { formatDate, formatIndianNumber } from "../helper/helper";
-import { MdDashboard, MdDelete, MdEdit } from "react-icons/md";
+import { MdDashboard, MdDelete, MdEdit, MdSummarize } from "react-icons/md";
 import { FaUser, FaUserGroup } from "react-icons/fa6";
 import Loader2 from "../components/common/Loader2";
+import { GrPowerReset } from "react-icons/gr";
+import { unsoldToSoldPlayerApi } from "../utils/api";
+import { toast } from "react-toastify";
 
 function Dashboard() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -29,6 +32,24 @@ function Dashboard() {
       setSelectedAuctionId("");
     }
   }
+
+  async function unsoldToSold(auctionId) {
+    const auction_id = auctionId;
+
+    try {
+      const res = await unsoldToSoldPlayerApi(auction_id);
+      if (res.data.success === true) {
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      if (error.response && error.response.data) {
+        toast.info(error.response.data.message);
+      } else {
+        toast.error("Unexpected error occurred.");
+      }
+    }
+  }
+
   useEffect(() => {
     dispatch(getUserAuctions(userId));
   }, []);
@@ -36,7 +57,7 @@ function Dashboard() {
   return (
     <div>
       <div className="bg-white p-4 rounded shadow">
-        <h2 className="text-2xl font-medium">My Auction List</h2>
+        <h2 className="text-2xl font-medium text-center">My Auction List</h2>
         <button
           className="bg-green-700 block text-white px-4 py-2 mt-4 rounded mx-auto"
           onClick={() => navigate("/create-auction")}
@@ -107,13 +128,29 @@ function Dashboard() {
                             >
                               <MdDashboard size={16} />
                             </button>
+                            <button
+                              className="bg-gray-100 hover:bg-gray-200 transition h-8 w-8 flex items-center justify-center rounded-full"
+                              onClick={() => unsoldToSold(data.id)}
+                              title="Mark all unsold player are available for auction"
+                            >
+                              <GrPowerReset size={16} />
+                            </button>
+                            <button
+                              className="bg-gray-100 hover:bg-gray-200 transition h-8 w-8 flex items-center justify-center rounded-full"
+                              onClick={() =>
+                                navigate(`/auction/summary/${data.id}`)
+                              }
+                              title="Auction summary"
+                            >
+                              <MdSummarize size={16} />
+                            </button>
                           </div>
                         </td>
                         <td className="border border-gray-200 px-4 py-2">
                           <img
                             src={data?.auction_logo}
                             alt="logo"
-                            className="w-20 h-16 object-cover rounded"
+                            className="w-32 h-18 object-cover rounded"
                           />
                         </td>
                         <td className="border border-gray-200 px-4 py-2">

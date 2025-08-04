@@ -160,10 +160,10 @@ export const addPlayer = ({
       value: sportCategory,
       onChange: onChangeField,
       options: [
-        { label: "Batsman", value: "batsman" },
-        { label: "Bowler", value: "bowler" },
-        { label: "All-Rounder", value: "allRounder" },
-        { label: "Wicketkeeper-Batsman", value: "wicketkeeper" },
+        { label: "Batsman", value: "Batsman" },
+        { label: "Bowler", value: "Bowler" },
+        { label: "All-Rounder", value: "All-Rounder" },
+        { label: "Wicketkeeper-Batsman", value: "Wicketkeeper-Batsman" },
       ],
     },
     {
@@ -198,7 +198,7 @@ export const addPlayer = ({
       error: error?.trouserSize,
       type: "select",
       name: "trouserSize",
-      label: "Select Trouser Size",
+      label: "Select Trouser Size (Optional)",
       value: trouserSize,
       onChange: onChangeField,
       options: [

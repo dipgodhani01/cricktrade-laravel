@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { initialPlayerData } from "../../../data/initialState";
 import Loader3 from "../../common/Loader3";
+import { EnglishConstant } from "../../../messages/message";
 
 function CreatePlayer() {
   const [imagePreview, setImagePreview] = useState(null);
@@ -29,10 +30,10 @@ function CreatePlayer() {
       setImagePreview(URL.createObjectURL(value));
     }
 
-    if (value === "" || value === null) {
+    if ((value === "" || value === null) && field !== "trouserSize") {
       setError((prev) => ({
         ...prev,
-        [field]: EnglishConstant[field] || "Required",
+        [field]: EnglishConstant[field] || "Required!",
       }));
     } else {
       setError((prev) => ({ ...prev, [field]: "" }));
@@ -45,8 +46,11 @@ function CreatePlayer() {
     const newError = {};
     let hasError = false;
     Object.keys(formData).forEach((key) => {
-      if (formData[key] === "" || formData[key] === null) {
-        newError[key] = EnglishConstant[key] || "Required";
+      if (
+        (formData[key] === "" || formData[key] === null) &&
+        key !== "trouserSize"
+      ) {
+        newError[key] = EnglishConstant[key] || "Required!";
         hasError = true;
       } else {
         newError[key] = "";

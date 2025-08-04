@@ -12,7 +12,6 @@
   sportCategory:"Select sports category",
   phone:"Enter player phone number",
   tshirtSize:"Select t-shirt size",
-  trouserSize:"Select trouser size",
   tshirtName:"Enter name as per on your t-shirt",
   tshirtNumber:"Enter number as per on your t-shirt",
   teamLogo:"Team logo required!",

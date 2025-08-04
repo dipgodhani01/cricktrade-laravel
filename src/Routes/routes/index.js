@@ -109,4 +109,9 @@ export const AuctionRoutesPath = [
     component: lazy(() => import("../../components/auction/Auction")),
     meta: { authRoute: true },
   },
+  {
+    path: "/auction/summary/:auctionId",
+    component: lazy(() => import("../../components/auction/Summary")),
+    meta: { authRoute: true },
+  },
 ];

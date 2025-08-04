@@ -125,7 +125,7 @@ function PlayerList() {
                             </button>
                             <button
                               className="bg-gray-100 hover:bg-gray-200 transition h-8 w-8 flex items-center justify-center rounded-full"
-                              title="Edit Auction"
+                              title="Change player minimum bid"
                               onClick={() => {
                                 setSelectedPlayerId(data.id);
                                 setMinBid(data.minimum_bid);

@@ -7,6 +7,7 @@ import {
   getAllPlayersApi,
   getPlayerByIdApi,
   soldPlayerApi,
+  unsoldPlayerApi,
   updateMinimumBidApi,
   updatePlayerApi,
 } from "../../utils/api";
@@ -102,6 +103,18 @@ export const soldPlayer = createAsyncThunk(
   }
 );
 
+export const unsoldPlayer = createAsyncThunk(
+  "players/unsoldPlayer",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await unsoldPlayerApi(formData);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message);
+    }
+  }
+);
+
 const playerSlice = createSlice({
   name: "players",
   initialState: {
@@ -178,6 +191,17 @@ const playerSlice = createSlice({
         state.players = state.players.filter((p) => p.id !== updatedPlayer.id);
       })
       .addCase(soldPlayer.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(unsoldPlayer.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(unsoldPlayer.fulfilled, (state, action) => {
+        state.loading = false;
+        const updatedPlayer = action.payload;
+        state.players = state.players.filter((p) => p.id !== updatedPlayer.id);
+      })
+      .addCase(unsoldPlayer.rejected, (state) => {
         state.loading = false;
       })
       .addCase(deletePlayer.fulfilled, (state, action) => {
