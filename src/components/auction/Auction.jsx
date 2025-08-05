@@ -1,13 +1,13 @@
 import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../common/Loader";
-import { formatIndianNumber } from "../../helper/helper";
+import { handleAmt } from "../../helper/helper";
 import { getAllTeams } from "../../redux/slice/teamSlice";
 import {
   getAllPlayers,
   soldPlayer,
   unsoldPlayer,
 } from "../../redux/slice/playerSlice";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAuctionById } from "../../redux/slice/auctionSlice";
 import { toast } from "react-toastify";
@@ -46,19 +46,24 @@ function Auction() {
   const handleTeamClick = (team) => {
     if (!selectedAuction || !randomPlayer) return;
 
-    const requiredAmount =
-      Number(team.player_remember) * Number(selectedAuction.minimum_bid);
-
-    const remainingBalance = Number(team.team_balance) - requiredAmount;
     const newBid = Number(currentBid) + Number(selectedAuction.bid_increment);
 
-    if (newBid > remainingBalance) {
+    if (newBid > team.remember_balance) {
       toast.warn("Low balance. Unable to place bid.");
       return;
     }
+    if (!selectedTeam) {
+      setSelectedTeam(team);
+      return;
+    }
+    if (selectedTeam?.id == team?.id) {
+      setCurrentBid(newBid);
+      setSelectedTeam(team);
+      return;
+    }
 
-    setCurrentBid(newBid);
     setSelectedTeam(team);
+    setCurrentBid(newBid);
   };
 
   const handleSold = () => {
@@ -77,7 +82,7 @@ function Auction() {
     toast.success(
       `${randomPlayer.player_name} has been sold to ${
         selectedTeam.team_name
-      } for ₹${formatIndianNumber(currentBid)}!`
+      } for ₹${handleAmt(currentBid)}!`
     );
   };
   const handleUnsold = () => {
@@ -124,7 +129,7 @@ function Auction() {
               <p className="text-xl md:text-2xl lg:text-3xl font-semibold text-center">
                 Base Price:{" "}
                 <span className="text-orange-500">
-                  {formatIndianNumber(randomPlayer?.minimum_bid) || "0"}
+                  {handleAmt(randomPlayer?.minimum_bid) || "0"}
                 </span>
               </p>
             </div>
@@ -180,9 +185,7 @@ function Auction() {
             <div className="mt-10 gap-4 text-2xl font-medium text-center">
               <p>
                 Current Bid:{" "}
-                <span className="text-green-500">
-                  {formatIndianNumber(currentBid)}
-                </span>
+                <span className="text-green-500">{handleAmt(currentBid)}</span>
               </p>
               {selectedTeam && <p>Bid by: {selectedTeam.team_name}</p>}
             </div>

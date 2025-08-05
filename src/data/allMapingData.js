@@ -118,6 +118,18 @@ export const playerListTableHeader = [
   "Tshirt Number",
 ];
 export const teamListTableHeader = ["Actions", "Team Logo", "Team Name"];
+export const summaryTableHeader = [
+  "No.",
+  "Team Logo",
+  "Team Name",
+  "Players Purchased",
+  "Players Remaining",
+  "Balance",
+  "Available Balance",
+  "Reserve Points",
+  "Max Bid Points",
+  "Download",
+];
 
 export const addPlayer = ({
   error,

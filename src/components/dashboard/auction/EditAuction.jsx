@@ -10,6 +10,8 @@ import { addAuction } from "../../../data/allMapingData";
 import { toast } from "react-toastify";
 import { initialAuctionData } from "../../../data/initialState";
 import { EnglishConstant } from "../../../messages/message";
+import Loader3 from "../../common/Loader3";
+import SubmitButton from "../../common/SubmitButton";
 
 function EditAuction() {
   const [formData, setFormData] = useState(initialAuctionData);
@@ -18,7 +20,9 @@ function EditAuction() {
   const { auctionId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { selectedAuction } = useSelector((state) => state.auctions);
+  const { selectedAuction, auctionLoading } = useSelector(
+    (state) => state.auctions
+  );
 
   useEffect(() => {
     dispatch(getAuctionById(auctionId));
@@ -145,14 +149,10 @@ function EditAuction() {
             />
           ))}
         </div>
-        <div className="mt-4">
-          <button
-            type="submit"
-            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-          >
-            Update Auction
-          </button>
-        </div>
+        <SubmitButton
+          green={true}
+          title={!auctionLoading ? "Update Auction" : <Loader3 />}
+        />
       </form>
     </div>
   );

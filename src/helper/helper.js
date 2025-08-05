@@ -7,7 +7,7 @@ export const formatDate = (isoDate) => {
   return `${day}/${month}/${year}`;
 };
 
-export function formatIndianNumber(price) {
+export function handleAmt(price) {
   const number = Number(price);
   if (isNaN(number)) return String(price);
   return number.toLocaleString("en-IN").toString();

@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { initialPlayerData } from "../../../data/initialState";
 import { getPlayerById, updatePlayer } from "../../../redux/slice/playerSlice";
 import Loader3 from "../../common/Loader3";
+import SubmitButton from "../../common/SubmitButton";
 
 function EditPlayer() {
   const [formData, setFormData] = useState(initialPlayerData);
@@ -15,7 +16,9 @@ function EditPlayer() {
   const { playerId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { selectedPlayer, loading } = useSelector((state) => state.players);
+  const { selectedPlayer, playerLoading } = useSelector(
+    (state) => state.players
+  );
 
   useEffect(() => {
     dispatch(getPlayerById(playerId));
@@ -135,14 +138,10 @@ function EditPlayer() {
             />
           ))}
         </div>
-        <div className="mt-4">
-          <button
-            type="submit"
-            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-          >
-            {!loading ? "Update Player" : <Loader3 />}
-          </button>
-        </div>
+        <SubmitButton
+          green={true}
+          title={!playerLoading ? "Update Player" : <Loader3 />}
+        />
       </form>
     </div>
   );

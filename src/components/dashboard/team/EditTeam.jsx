@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { addTeam } from "../../../data/allMapingData";
 import Formfields from "../../common/Formfields";
 import Loader3 from "../../common/Loader3";
+import SubmitButton from "../../common/SubmitButton";
 
 function EditTeam() {
   const [imagePreview, setImagePreview] = useState(null);
@@ -21,7 +22,7 @@ function EditTeam() {
   const { teamId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { selectedTeam, loading } = useSelector((state) => state.teams);
+  const { selectedTeam, teamLoading } = useSelector((state) => state.teams);
 
   useEffect(() => {
     dispatch(getTeamById(teamId));
@@ -129,14 +130,10 @@ function EditTeam() {
             />
           ))}
         </div>
-        <div className="mt-4">
-          <button
-            type="submit"
-            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-          >
-            {!loading ? "Update Team" : <Loader3 />}
-          </button>
-        </div>
+        <SubmitButton
+          green={true}
+          title={!teamLoading ? "Update Team" : <Loader3 />}
+        />
       </form>
     </div>
   );

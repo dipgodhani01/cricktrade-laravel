@@ -8,12 +8,13 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { initialAuctionData } from "../../../data/initialState";
 import Loader3 from "../../common/Loader3";
+import SubmitButton from "../../common/SubmitButton";
 
 function CreateAuction() {
   const [imagePreview, setImagePreview] = useState(null);
   const [formData, setFormData] = useState(initialAuctionData);
   const user_id = useSelector((state) => state.user.user.user_id);
-  const { loading } = useSelector((state) => state.auctions);
+  const { auctionLoading } = useSelector((state) => state.auctions);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -120,14 +121,10 @@ function CreateAuction() {
             />
           ))}
         </div>
-        <div className="mt-4">
-          <button
-            type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            {!loading ? "Add Auction" : <Loader3 />}
-          </button>
-        </div>
+        <SubmitButton
+          green={false}
+          title={!auctionLoading ? "Add Auction" : <Loader3 />}
+        />
       </form>
     </div>
   );

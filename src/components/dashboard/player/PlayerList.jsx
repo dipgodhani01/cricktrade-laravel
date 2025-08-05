@@ -12,6 +12,9 @@ import {
 import Formfields from "../../common/Formfields";
 import { EnglishConstant } from "../../../messages/message";
 import { toast } from "react-toastify";
+import Thead from "../../common/Thead";
+import { actBtn, tr, trUpper } from "../../../helper/style";
+import DeletePopup from "../../common/DeletePopup";
 
 function PlayerList() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -19,7 +22,7 @@ function PlayerList() {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [minBid, setMinBid] = useState(false);
   const [error, setError] = useState({});
-  const { players, loading } = useSelector((state) => state.players);
+  const { players, playerLoading } = useSelector((state) => state.players);
   const { auctionId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -81,26 +84,13 @@ function PlayerList() {
           + Add Player
         </button>
         <br />
-        {loading ? (
+        {playerLoading ? (
           <Loader2 />
         ) : (
           <div className="mt-4 overflow-x-auto table-responsive">
             {players && players.length > 0 ? (
               <table className="border-collapse w-full border mb-3 min-w-[1180px] border-black">
-                <thead className="bg-gray-100">
-                  <tr>
-                    {playerListTableHeader?.map((li, i) => {
-                      return (
-                        <th
-                          key={i}
-                          className="border border-gray-200 px-4 py-2 text-left"
-                        >
-                          {li}
-                        </th>
-                      );
-                    })}
-                  </tr>
-                </thead>
+                <Thead data={playerListTableHeader} />
                 <tbody>
                   {players.map((data) => {
                     return (
@@ -108,7 +98,7 @@ function PlayerList() {
                         <td className="border border-gray-200 px-4 py-2">
                           <div className="flex gap-2 text-blue-800">
                             <button
-                              className="bg-gray-100 hover:bg-gray-200 transition h-8 w-8 flex items-center justify-center rounded-full"
+                              className={actBtn}
                               title="Edit Player"
                               onClick={() =>
                                 navigate(`/edit-player/${data.id}`)
@@ -117,14 +107,14 @@ function PlayerList() {
                               <MdEdit size={20} />
                             </button>
                             <button
-                              className="bg-gray-100 hover:bg-gray-200 transition h-8 w-8 flex items-center justify-center rounded-full"
+                              className={actBtn}
                               title="Delete Player"
                               onClick={() => confirmDelete(data.id)}
                             >
                               <MdDelete size={20} />
                             </button>
                             <button
-                              className="bg-gray-100 hover:bg-gray-200 transition h-8 w-8 flex items-center justify-center rounded-full"
+                              className={actBtn}
                               title="Change player minimum bid"
                               onClick={() => {
                                 setSelectedPlayerId(data.id);
@@ -136,30 +126,14 @@ function PlayerList() {
                             </button>
                           </div>
                         </td>
-                        <td className="border border-gray-200 px-4 py-2">
-                          {data.player_name}
-                        </td>
-                        <td className="border border-gray-200 px-4 py-2">
-                          {data.minimum_bid}
-                        </td>
-                        <td className="border border-gray-200 px-4 py-2">
-                          {data.category}
-                        </td>
-                        <td className="border border-gray-200 px-4 py-2">
-                          {data.phone}
-                        </td>
-                        <td className="border border-gray-200 px-4 py-2 uppercase">
-                          {data.tshirt_size}
-                        </td>
-                        <td className="border border-gray-200 px-4 py-2 uppercase">
-                          {data.trouser_size || "-"}
-                        </td>
-                        <td className="border border-gray-200 px-4 py-2">
-                          {data.tshirt_name}
-                        </td>
-                        <td className="border border-gray-200 px-4 py-2">
-                          {data.tshirt_number}
-                        </td>
+                        <td className={tr}>{data.player_name}</td>
+                        <td className={tr}>{data.minimum_bid}</td>
+                        <td className={tr}>{data.category}</td>
+                        <td className={tr}>{data.phone}</td>
+                        <td className={trUpper}>{data.tshirt_size}</td>
+                        <td className={trUpper}>{data.trouser_size || "-"}</td>
+                        <td className={tr}>{data.tshirt_name}</td>
+                        <td className={tr}>{data.tshirt_number}</td>
                       </tr>
                     );
                   })}
@@ -175,27 +149,11 @@ function PlayerList() {
       </div>
 
       {showConfirmModal && !showUpdateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-md text-center w-[90%] max-w-md">
-            <h3 className="text-2xl font-medium mb-4">
-              Are you sure you want to delete this player?
-            </h3>
-            <div className="flex justify-end gap-4 pt-2">
-              <button
-                className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 min-w-20 rounded"
-                onClick={handleDeletePlayerConfirmed}
-              >
-                Yes
-              </button>
-              <button
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 min-w-20 rounded"
-                onClick={() => setShowConfirmModal(false)}
-              >
-                No
-              </button>
-            </div>
-          </div>
-        </div>
+        <DeletePopup
+          title="Are you sure you want to delete this player?"
+          handleDeleteConfirmed={handleDeletePlayerConfirmed}
+          setShowConfirmModal={setShowConfirmModal}
+        />
       )}
 
       {showUpdateModal && !showConfirmModal && (

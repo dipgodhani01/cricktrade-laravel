@@ -5,11 +5,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import Loader2 from "../../common/Loader2";
 import { MdDelete, MdEdit } from "react-icons/md";
 import { deleteTeam, getAllTeams } from "../../../redux/slice/teamSlice";
+import { actBtn, th, tr, trImg } from "../../../helper/style";
+import Thead from "../../common/Thead";
+import DeletePopup from "../../common/DeletePopup";
 
 function TeamList() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [selectedTeamId, setSelectedTeamId] = useState("");
-  const { teams, loading } = useSelector((state) => state.teams);
+  const { teams, teamLoading } = useSelector((state) => state.teams);
   const { auctionId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -44,26 +47,13 @@ function TeamList() {
           + Add Team
         </button>
         <br />
-        {loading ? (
+        {teamLoading ? (
           <Loader2 />
         ) : (
           <div className="mt-4 overflow-x-auto table-responsive">
             {teams && teams.length > 0 ? (
               <table className="border-collapse w-full border mb-3 md:w-[600px] border-black">
-                <thead className="bg-gray-100">
-                  <tr>
-                    {teamListTableHeader?.map((li, i) => {
-                      return (
-                        <th
-                          key={i}
-                          className="border border-gray-200 px-4 py-2 text-left"
-                        >
-                          {li}
-                        </th>
-                      );
-                    })}
-                  </tr>
-                </thead>
+                <Thead data={teamListTableHeader} />
                 <tbody>
                   {teams.map((data) => {
                     return (
@@ -71,31 +61,25 @@ function TeamList() {
                         <td className="border border-gray-200 px-4 py-2">
                           <div className="flex gap-2 text-blue-800">
                             <button
-                              className="bg-gray-100 hover:bg-gray-200 transition h-8 w-8 flex items-center justify-center rounded-full"
+                              className={actBtn}
                               onClick={() => navigate(`/edit-team/${data.id}`)}
-                              title="Edit Player"
+                              title="Edit Team"
                             >
                               <MdEdit size={20} />
                             </button>
                             <button
-                              className="bg-gray-100 hover:bg-gray-200 transition h-8 w-8 flex items-center justify-center rounded-full"
+                              className={actBtn}
                               onClick={() => confirmDelete(data.id)}
-                              title="Delete Player"
+                              title="Delete Team"
                             >
                               <MdDelete size={20} />
                             </button>
                           </div>
                         </td>
-                        <td className="border border-gray-200 px-4 py-2">
-                          <img
-                            src={data?.team_logo}
-                            alt="logo"
-                            className="w-16 h-12 object-cover rounded"
-                          />
+                        <td className={tr}>
+                          <img src={data?.team_logo} className={trImg} />
                         </td>
-                        <td className="border border-gray-200 px-4 py-2">
-                          {data.team_name}
-                        </td>
+                        <td className={tr}>{data.team_name}</td>
                       </tr>
                     );
                   })}
@@ -111,27 +95,11 @@ function TeamList() {
       </div>
 
       {showConfirmModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-md text-center w-[90%] max-w-md">
-            <h3 className="text-2xl font-medium mb-4">
-              Are you sure you want to delete this team?
-            </h3>
-            <div className="flex justify-end gap-4 pt-2">
-              <button
-                className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 min-w-20 rounded"
-                onClick={handleDeleteTeamConfirmed}
-              >
-                Yes
-              </button>
-              <button
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 min-w-20 rounded"
-                onClick={() => setShowConfirmModal(false)}
-              >
-                No
-              </button>
-            </div>
-          </div>
-        </div>
+        <DeletePopup
+          title="Are you sure you want to delete this team?"
+          handleDeleteConfirmed={handleDeleteTeamConfirmed}
+          setShowConfirmModal={setShowConfirmModal}
+        />
       )}
     </div>
   );

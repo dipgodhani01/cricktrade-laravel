@@ -78,7 +78,7 @@ export const deleteTeam = createAsyncThunk(
 const teamSlice = createSlice({
   name: "teams",
   initialState: {
-    loading: false,
+    teamLoading: false,
     teams: [],
     selectedTeam: null,
   },
@@ -86,39 +86,39 @@ const teamSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(createTeam.pending, (state) => {
-        state.loading = true;
+        state.teamLoading = true;
       })
       .addCase(createTeam.fulfilled, (state) => {
-        state.loading = false;
+        state.teamLoading = false;
       })
       .addCase(createTeam.rejected, (state) => {
-        state.loading = false;
+        state.teamLoading = false;
       })
       .addCase(getAllTeams.pending, (state) => {
-        state.loading = true;
+        state.teamLoading = true;
       })
       .addCase(getAllTeams.fulfilled, (state, action) => {
-        state.loading = false;
+        state.teamLoading = false;
         state.teams = action.payload;
       })
       .addCase(getAllTeams.rejected, (state) => {
-        state.loading = false;
+        state.teamLoading = false;
       })
       .addCase(getTeamById.pending, (state) => {
-        state.loading = true;
+        state.teamLoading = true;
       })
       .addCase(getTeamById.fulfilled, (state, action) => {
-        state.loading = false;
+        state.teamLoading = false;
         state.selectedTeam = action.payload;
       })
       .addCase(getTeamById.rejected, (state) => {
-        state.loading = false;
+        state.teamLoading = false;
       })
       .addCase(updateTeam.pending, (state) => {
-        state.loading = true;
+        state.teamLoading = true;
       })
       .addCase(updateTeam.fulfilled, (state, action) => {
-        state.loading = false;
+        state.teamLoading = false;
         const updatedTeam = action.payload;
         const index = state.teams.findIndex((p) => p.id === updatedTeam.id);
         if (index !== -1) {
@@ -126,18 +126,18 @@ const teamSlice = createSlice({
         }
       })
       .addCase(updateTeam.rejected, (state) => {
-        state.loading = false;
+        state.teamLoading = false;
       })
       .addCase(deleteTeam.pending, (state) => {
-        state.loading = true;
+        state.teamLoading = true;
       })
       .addCase(deleteTeam.fulfilled, (state, action) => {
-        state.loading = false;
+        state.teamLoading = false;
         const deleteTeamId = action.payload;
         state.teams = state.teams.filter((p) => p.id !== deleteTeamId);
       })
       .addCase(deleteTeam.rejected, (state) => {
-        state.loading = false;
+        state.teamLoading = false;
       });
   },
 });

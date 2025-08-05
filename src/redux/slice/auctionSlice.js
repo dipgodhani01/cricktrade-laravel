@@ -79,7 +79,7 @@ export const deleteAuction = createAsyncThunk(
 const auctionSlice = createSlice({
   name: "auctions",
   initialState: {
-    loading: false,
+    auctionLoading: false,
     auctions: [],
     selectedAuction: null,
   },
@@ -87,39 +87,39 @@ const auctionSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(createAuction.pending, (state) => {
-        state.loading = true;
+        state.auctionLoading = true;
       })
       .addCase(createAuction.fulfilled, (state) => {
-        state.loading = false;
+        state.auctionLoading = false;
       })
       .addCase(createAuction.rejected, (state) => {
-        state.loading = false;
+        state.auctionLoading = false;
       })
       .addCase(getUserAuctions.pending, (state) => {
-        state.loading = true;
+        state.auctionLoading = true;
       })
       .addCase(getUserAuctions.fulfilled, (state, action) => {
-        state.loading = false;
+        state.auctionLoading = false;
         state.auctions = action.payload;
       })
       .addCase(getUserAuctions.rejected, (state) => {
-        state.loading = false;
+        state.auctionLoading = false;
       })
       .addCase(getAuctionById.pending, (state) => {
-        state.loading = true;
+        state.auctionLoading = true;
       })
       .addCase(getAuctionById.fulfilled, (state, action) => {
-        state.loading = false;
+        state.auctionLoading = false;
         state.selectedAuction = action.payload;
       })
       .addCase(getAuctionById.rejected, (state) => {
-        state.loading = false;
+        state.auctionLoading = false;
       })
       .addCase(updateAuction.pending, (state) => {
-        state.loading = true;
+        state.auctionLoading = true;
       })
       .addCase(updateAuction.fulfilled, (state, action) => {
-        state.loading = false;
+        state.auctionLoading = false;
         const updatedAuction = action.payload;
         const index = state.auctions.findIndex(
           (p) => p.id === updatedAuction.id
@@ -129,18 +129,18 @@ const auctionSlice = createSlice({
         }
       })
       .addCase(updateAuction.rejected, (state) => {
-        state.loading = false;
+        state.auctionLoading = false;
       })
       .addCase(deleteAuction.pending, (state) => {
-        state.loading = true;
+        state.auctionLoading = true;
       })
       .addCase(deleteAuction.fulfilled, (state, action) => {
-        state.loading = false;
+        state.auctionLoading = false;
         const deleteAuctionId = action.payload;
         state.auctions = state.auctions.filter((p) => p.id !== deleteAuctionId);
       })
       .addCase(deleteAuction.rejected, (state) => {
-        state.loading = false;
+        state.auctionLoading = false;
       });
   },
 });

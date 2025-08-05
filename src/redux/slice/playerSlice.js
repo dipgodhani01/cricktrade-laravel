@@ -118,7 +118,7 @@ export const unsoldPlayer = createAsyncThunk(
 const playerSlice = createSlice({
   name: "players",
   initialState: {
-    loading: false,
+    playerLoading: false,
     players: [],
     selectedPlayer: null,
   },
@@ -126,39 +126,39 @@ const playerSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(createPlayer.pending, (state) => {
-        state.loading = true;
+        state.playerLoading = true;
       })
       .addCase(createPlayer.fulfilled, (state) => {
-        state.loading = false;
+        state.playerLoading = false;
       })
       .addCase(createPlayer.rejected, (state) => {
-        state.loading = false;
+        state.playerLoading = false;
       })
       .addCase(getAllPlayers.pending, (state) => {
-        state.loading = true;
+        state.playerLoading = true;
       })
       .addCase(getAllPlayers.fulfilled, (state, action) => {
-        state.loading = false;
+        state.playerLoading = false;
         state.players = action.payload;
       })
       .addCase(getAllPlayers.rejected, (state) => {
-        state.loading = false;
+        state.playerLoading = false;
       })
       .addCase(getPlayerById.pending, (state) => {
-        state.loading = true;
+        state.playerLoading = true;
       })
       .addCase(getPlayerById.fulfilled, (state, action) => {
-        state.loading = false;
+        state.playerLoading = false;
         state.selectedPlayer = action.payload;
       })
       .addCase(getPlayerById.rejected, (state) => {
-        state.loading = false;
+        state.playerLoading = false;
       })
       .addCase(updatePlayer.pending, (state) => {
-        state.loading = true;
+        state.playerLoading = true;
       })
       .addCase(updatePlayer.fulfilled, (state, action) => {
-        state.loading = false;
+        state.playerLoading = false;
         const updatedPlayer = action.payload;
         const index = state.players.findIndex((p) => p.id === updatedPlayer.id);
         if (index !== -1) {
@@ -166,13 +166,13 @@ const playerSlice = createSlice({
         }
       })
       .addCase(updatePlayer.rejected, (state) => {
-        state.loading = false;
+        state.playerLoading = false;
       })
       .addCase(updateMinimumBid.pending, (state) => {
-        state.loading = true;
+        state.playerLoading = true;
       })
       .addCase(updateMinimumBid.fulfilled, (state, action) => {
-        state.loading = false;
+        state.playerLoading = false;
         const updatedPlayer = action.payload;
         const index = state.players.findIndex((p) => p.id === updatedPlayer.id);
         if (index !== -1) {
@@ -180,37 +180,37 @@ const playerSlice = createSlice({
         }
       })
       .addCase(updateMinimumBid.rejected, (state) => {
-        state.loading = false;
+        state.playerLoading = false;
       })
       .addCase(soldPlayer.pending, (state) => {
-        state.loading = true;
+        state.playerLoading = true;
       })
       .addCase(soldPlayer.fulfilled, (state, action) => {
-        state.loading = false;
+        state.playerLoading = false;
         const updatedPlayer = action.payload;
         state.players = state.players.filter((p) => p.id !== updatedPlayer.id);
       })
       .addCase(soldPlayer.rejected, (state) => {
-        state.loading = false;
+        state.playerLoading = false;
       })
       .addCase(unsoldPlayer.pending, (state) => {
-        state.loading = true;
+        state.playerLoading = true;
       })
       .addCase(unsoldPlayer.fulfilled, (state, action) => {
-        state.loading = false;
+        state.playerLoading = false;
         const updatedPlayer = action.payload;
         state.players = state.players.filter((p) => p.id !== updatedPlayer.id);
       })
       .addCase(unsoldPlayer.rejected, (state) => {
-        state.loading = false;
+        state.playerLoading = false;
       })
       .addCase(deletePlayer.fulfilled, (state, action) => {
-        state.loading = false;
+        state.playerLoading = false;
         const deletedPlayerId = action.payload;
         state.players = state.players.filter((p) => p.id !== deletedPlayerId);
       })
       .addCase(deletePlayer.rejected, (state) => {
-        state.loading = false;
+        state.playerLoading = false;
       });
   },
 });

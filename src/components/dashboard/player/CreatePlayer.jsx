@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { initialPlayerData } from "../../../data/initialState";
 import Loader3 from "../../common/Loader3";
 import { EnglishConstant } from "../../../messages/message";
+import SubmitButton from "../../common/SubmitButton";
 
 function CreatePlayer() {
   const [imagePreview, setImagePreview] = useState(null);
@@ -21,7 +22,7 @@ function CreatePlayer() {
   const { auctionId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading } = useSelector((state) => state.players);
+  const { playerLoading } = useSelector((state) => state.players);
 
   const onChangeField = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -113,14 +114,10 @@ function CreatePlayer() {
             />
           ))}
         </div>
-        <div className="mt-4">
-          <button
-            type="submit"
-            className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            {!loading ? "Add Player" : <Loader3 />}
-          </button>
-        </div>
+        <SubmitButton
+          green={false}
+          title={!playerLoading ? "Add Player" : <Loader3 />}
+        />
       </form>
     </div>
   );

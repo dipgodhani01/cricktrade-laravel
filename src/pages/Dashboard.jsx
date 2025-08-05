@@ -3,13 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { deleteAuction, getUserAuctions } from "../redux/slice/auctionSlice";
 import { useEffect, useState } from "react";
 import { auctionListTableHeader } from "../data/allMapingData";
-import { formatDate, formatIndianNumber } from "../helper/helper";
+import { formatDate, handleAmt } from "../helper/helper";
 import { MdDashboard, MdDelete, MdEdit, MdSummarize } from "react-icons/md";
 import { FaUser, FaUserGroup } from "react-icons/fa6";
 import Loader2 from "../components/common/Loader2";
 import { GrPowerReset } from "react-icons/gr";
 import { unsoldToSoldPlayerApi } from "../utils/api";
 import { toast } from "react-toastify";
+import { actBtn, tr, trImg } from "../helper/style";
+import Thead from "../components/common/Thead";
+import DeletePopup from "../components/common/DeletePopup";
 
 function Dashboard() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -18,7 +21,7 @@ function Dashboard() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.user.user.user_id);
-  const { auctions, loading } = useSelector((state) => state.auctions);
+  const { auctions, auctionLoading } = useSelector((state) => state.auctions);
 
   function confirmDelete(auctionId) {
     setSelectedAuctionId(auctionId);
@@ -65,26 +68,13 @@ function Dashboard() {
           + Add Auction
         </button>
         <br />
-        {loading ? (
+        {auctionLoading ? (
           <Loader2 />
         ) : (
           <div className="mt-4 overflow-x-auto table-responsive">
             {auctions && auctions.length > 0 ? (
               <table className="border-collapse w-full border mb-3 min-w-[1120px] border-black">
-                <thead className="bg-gray-100">
-                  <tr>
-                    {auctionListTableHeader?.map((li, i) => {
-                      return (
-                        <th
-                          key={i}
-                          className="border border-gray-200 px-4 py-2 text-left"
-                        >
-                          {li}
-                        </th>
-                      );
-                    })}
-                  </tr>
-                </thead>
+                <Thead data={auctionListTableHeader} />
                 <tbody>
                   {auctions.map((data) => {
                     return (
@@ -92,7 +82,7 @@ function Dashboard() {
                         <td className="border border-gray-200 px-4 py-2">
                           <div className="flex gap-2 text-blue-800">
                             <button
-                              className="bg-gray-100 hover:bg-gray-200 transition h-8 w-8 flex items-center justify-center rounded-full"
+                              className={actBtn}
                               onClick={() =>
                                 navigate(`/edit-auction/${data.id}`)
                               }
@@ -101,42 +91,42 @@ function Dashboard() {
                               <MdEdit size={20} />
                             </button>
                             <button
-                              className="bg-gray-100 hover:bg-gray-200 transition h-8 w-8 flex items-center justify-center rounded-full"
+                              className={actBtn}
                               onClick={() => confirmDelete(data.id)}
                               title="Delete Auction"
                             >
                               <MdDelete size={20} />
                             </button>
                             <button
-                              className="bg-gray-100 hover:bg-gray-200 transition h-8 w-8 flex items-center justify-center rounded-full"
+                              className={actBtn}
                               onClick={() => navigate(`/players/${data.id}`)}
                               title="All Players"
                             >
                               <FaUser size={16} />
                             </button>
                             <button
-                              className="bg-gray-100 hover:bg-gray-200 transition h-8 w-8 flex items-center justify-center rounded-full"
+                              className={actBtn}
                               onClick={() => navigate(`/teams/${data.id}`)}
                               title="All Teams"
                             >
                               <FaUserGroup size={16} />
                             </button>
                             <button
-                              className="bg-gray-100 hover:bg-gray-200 transition h-8 w-8 flex items-center justify-center rounded-full"
+                              className={actBtn}
                               onClick={() => navigate(`/auction/${data.id}`)}
                               title="Auction Dashboard"
                             >
                               <MdDashboard size={16} />
                             </button>
                             <button
-                              className="bg-gray-100 hover:bg-gray-200 transition h-8 w-8 flex items-center justify-center rounded-full"
+                              className={actBtn}
                               onClick={() => unsoldToSold(data.id)}
                               title="Mark all unsold player are available for auction"
                             >
                               <GrPowerReset size={16} />
                             </button>
                             <button
-                              className="bg-gray-100 hover:bg-gray-200 transition h-8 w-8 flex items-center justify-center rounded-full"
+                              className={actBtn}
                               onClick={() =>
                                 navigate(`/auction/summary/${data.id}`)
                               }
@@ -146,34 +136,16 @@ function Dashboard() {
                             </button>
                           </div>
                         </td>
-                        <td className="border border-gray-200 px-4 py-2">
-                          <img
-                            src={data?.auction_logo}
-                            alt="logo"
-                            className="w-32 h-18 object-cover rounded"
-                          />
+                        <td className={tr}>
+                          <img src={data?.auction_logo} className={trImg} />
                         </td>
-                        <td className="border border-gray-200 px-4 py-2">
-                          {data.auction_name}
-                        </td>
-                        <td className="border border-gray-200 px-4 py-2">
-                          {data.sports_type}
-                        </td>
-                        <td className="border border-gray-200 px-4 py-2">
-                          {formatIndianNumber(data.point_perteam)}
-                        </td>
-                        <td className="border border-gray-200 px-4 py-2">
-                          {formatIndianNumber(data.minimum_bid)}
-                        </td>
-                        <td className="border border-gray-200 px-4 py-2">
-                          {formatIndianNumber(data.bid_increment)}
-                        </td>
-                        <td className="border border-gray-200 px-4 py-2">
-                          {data.player_perteam}
-                        </td>
-                        <td className="border border-gray-200 px-4 py-2">
-                          {formatDate(data?.auction_date)}
-                        </td>
+                        <td className={tr}>{data.auction_name}</td>
+                        <td className={tr}>{data.sports_type}</td>
+                        <td className={tr}>{handleAmt(data.point_perteam)}</td>
+                        <td className={tr}>{handleAmt(data.minimum_bid)}</td>
+                        <td className={tr}>{handleAmt(data.bid_increment)}</td>
+                        <td className={tr}>{data.player_perteam}</td>
+                        <td className={tr}>{formatDate(data?.auction_date)}</td>
                       </tr>
                     );
                   })}
@@ -189,27 +161,11 @@ function Dashboard() {
       </div>
 
       {showConfirmModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-md text-center w-[90%] max-w-md">
-            <h3 className="text-2xl font-medium mb-4">
-              Are you sure you want to delete this auction?
-            </h3>
-            <div className="flex justify-end gap-4 pt-2">
-              <button
-                className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 min-w-20 rounded"
-                onClick={handleDeleteAuctionConfirmed}
-              >
-                Yes
-              </button>
-              <button
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 min-w-20 rounded"
-                onClick={() => setShowConfirmModal(false)}
-              >
-                No
-              </button>
-            </div>
-          </div>
-        </div>
+        <DeletePopup
+          title="Are you sure you want to delete this auction?"
+          handleDeleteConfirmed={handleDeleteAuctionConfirmed}
+          setShowConfirmModal={setShowConfirmModal}
+        />
       )}
     </div>
   );
