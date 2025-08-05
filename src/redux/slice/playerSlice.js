@@ -6,6 +6,7 @@ import {
   deletePlayerApi,
   getAllPlayersApi,
   getPlayerByIdApi,
+  getPlayersByTeamApi,
   soldPlayerApi,
   unsoldPlayerApi,
   updateMinimumBidApi,
@@ -114,6 +115,17 @@ export const unsoldPlayer = createAsyncThunk(
     }
   }
 );
+export const getPlayersByTeam = createAsyncThunk(
+  "players/getPlayersByTeam",
+  async (teamId, { rejectWithValue }) => {    
+    try {
+      const response = await getPlayersByTeamApi(teamId);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message);
+    }
+  }
+);
 
 const playerSlice = createSlice({
   name: "players",
@@ -121,6 +133,7 @@ const playerSlice = createSlice({
     playerLoading: false,
     players: [],
     selectedPlayer: null,
+    playersByTeam: [],
   },
 
   extraReducers: (builder) => {
@@ -210,6 +223,16 @@ const playerSlice = createSlice({
         state.players = state.players.filter((p) => p.id !== deletedPlayerId);
       })
       .addCase(deletePlayer.rejected, (state) => {
+        state.playerLoading = false;
+      })
+      .addCase(getPlayersByTeam.pending, (state) => {
+        state.playerLoading = true;
+      })
+      .addCase(getPlayersByTeam.fulfilled, (state, action) => {
+        state.playerLoading = false;
+        state.playersByTeam = action.payload;
+      })
+      .addCase(getPlayersByTeam.rejected, (state) => {
         state.playerLoading = false;
       });
   },

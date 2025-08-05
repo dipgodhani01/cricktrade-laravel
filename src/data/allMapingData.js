@@ -130,6 +130,15 @@ export const summaryTableHeader = [
   "Max Bid Points",
   "Download",
 ];
+export const summaryPlayerTableHeader = [
+  "Player ID",
+  "Player Photo",
+  "Player Name",
+  "Sports Category",
+  "Status",
+  "Team",
+  "Sold For",
+];
 
 export const addPlayer = ({
   error,

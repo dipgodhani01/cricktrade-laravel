@@ -33,6 +33,8 @@ export const createPlayerApi = (formData) =>
   api.post("/api/player/create-player", formData);
 export const getAllPlayersApi = (auction_id) =>
   api.get(`/api/player/get/all?auction_id=${auction_id}`);
+export const getPlayersByTeamApi = (team_id) =>
+  api.get(`/api/player/get-by-team?team_id=${team_id}`);
 export const getPlayerByIdApi = (playerId) => {
   return api.get(`/api/player/get-one/${playerId}`);
 };

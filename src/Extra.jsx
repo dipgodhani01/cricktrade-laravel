@@ -1,17 +1,44 @@
-// const handleTeamClick = (team) => {
-//   if (!selectedAuction || !randomPlayer) return;
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+import { getPlayersByTeamApi } from "../../utils/api";
 
-//   const requiredAmount =
-//     Number(team.player_remember) * Number(selectedAuction.minimum_bid);
+axios.defaults.withCredentials = true;
 
-//   const remainingBalance = Number(team.team_balance) - requiredAmount;
-//   const newBid = Number(currentBid) + Number(selectedAuction.bid_increment);
+export const getPlayersByTeam = createAsyncThunk(
+  "players/getPlayersByTeam",
+  async (teamId, { rejectWithValue }) => {
+    console.log("Team Id : ", teamId);
 
-//   if (newBid > remainingBalance) {
-//     toast.warn("Low balance. Unable to place bid.");
-//     return;
-//   }
+    try {
+      const response = await getPlayersByTeamApi(teamId);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message);
+    }
+  }
+);
 
-//   setCurrentBid(newBid);
-//   setSelectedTeam(team);
-// };
+const playerSlice = createSlice({
+  name: "players",
+  initialState: {
+    playerLoading: false,
+    playersByTeam: [],
+  },
+
+  extraReducers: (builder) => {
+    builder
+      .addCase(getPlayersByTeam.pending, (state) => {
+        state.playerLoading = true;
+      })
+      .addCase(getPlayersByTeam.fulfilled, (state, action) => {
+        state.playerLoading = false;
+        state.playersByTeam = action.payload;
+      })
+      .addCase(getPlayersByTeam.rejected, (state) => {
+        state.playerLoading = false;
+      });
+  },
+});
+
+const playerReducer = playerSlice.reducer;
+export default playerReducer;

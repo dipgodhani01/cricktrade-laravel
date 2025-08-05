@@ -12,3 +12,20 @@ export function handleAmt(price) {
   if (isNaN(number)) return String(price);
   return number.toLocaleString("en-IN").toString();
 }
+
+
+export const filterTeams = (teams, searchTerm) => {
+  if (!searchTerm.trim()) return teams || [];
+  const lowerSearch = searchTerm.toLowerCase();
+  return teams?.filter((team) =>
+    team.team_name.toLowerCase().includes(lowerSearch)
+  );
+};
+
+export const filterPlayers = (players, searchTerm) => {
+  if (!searchTerm.trim()) return players || [];
+  const lowerSearch = searchTerm.toLowerCase();
+  return players?.filter((player) =>
+    player.player_name.toLowerCase().includes(lowerSearch)
+  );
+};

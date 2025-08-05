@@ -1,31 +1,48 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getAllTeams } from "../../redux/slice/teamSlice";
 import { getAuctionById } from "../../redux/slice/auctionSlice";
 import Loader2 from "../common/Loader2";
-import { summaryTableHeader } from "../../data/allMapingData";
+import {
+  summaryPlayerTableHeader,
+  summaryTableHeader,
+} from "../../data/allMapingData";
 import { FaCloudDownloadAlt } from "react-icons/fa";
-import { handleAmt } from "../../helper/helper";
+import { filterPlayers, filterTeams, handleAmt } from "../../helper/helper";
 import { tr } from "../../helper/style";
 import Thead from "../common/Thead";
+import { LuListFilter } from "react-icons/lu";
+import { getPlayersByTeam } from "../../redux/slice/playerSlice";
 
 function Summary() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [playerSearchTerm, setPlayerSearchTerm] = useState("");
   const { auctionId } = useParams();
   const dispatch = useDispatch();
   const { teams, loading: teamsLoading } = useSelector((state) => state.teams);
+  const { playersByTeam, playerLoading } = useSelector(
+    (state) => state.players
+  );
   const { selectedAuction, loading: auctionLoading } = useSelector(
     (state) => state.auctions
   );
+  const filteredTeams = useMemo(
+    () => filterTeams(teams, searchTerm),
+    [teams, searchTerm]
+  );
+  const filteredPlayers = useMemo(
+    () => filterPlayers(playersByTeam, playerSearchTerm),
+    [playersByTeam, playerSearchTerm]
+  );
 
   const totalTeams = useMemo(() => teams?.length || 0, [teams]);
+  const isLoading = teamsLoading || auctionLoading;
 
   useEffect(() => {
     dispatch(getAuctionById(auctionId));
     dispatch(getAllTeams(auctionId));
   }, [auctionId, dispatch]);
-
-  const isLoading = teamsLoading || auctionLoading;
 
   if (!selectedAuction && !isLoading) {
     return <div className="text-center py-10 text-xl">Data Not Available</div>;
@@ -59,13 +76,36 @@ function Summary() {
 
       {/* Team Summary Table */}
       <div className="mb-8">
-        {teams?.length > 0 ? (
-          <div className="overflow-x-auto">
+        <div className="overflow-x-auto">
+          <h2 className="text-center my-4 text-2xl font-medium">
+            All Teams & Details
+          </h2>
+
+          <div className="py-4">
+            <div className="flex items-center gap-3 border-b border-b-gray-300 px-3 py-2 hover:border-blue-500 transition">
+              <LuListFilter
+                className="text-gray-500 group-hover:text-blue-500"
+                size={20}
+              />
+              <input
+                type="search"
+                placeholder="Search Team..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full outline-none bg-transparent text-gray-700 placeholder-gray-400 text-lg"
+              />
+            </div>
+          </div>
+          {filteredTeams?.length > 0 ? (
             <table className="w-full min-w-[1200px] border-collapse">
               <Thead data={summaryTableHeader} />
               <tbody>
-                {teams.map((team, i) => (
-                  <tr key={team.id} className="hover:bg-gray-50">
+                {filteredTeams.map((team, i) => (
+                  <tr
+                    key={team.id}
+                    className="hover:bg-gray-50 cursor-pointer"
+                    onClick={() => dispatch(getPlayersByTeam(team.id))}
+                  >
                     <td className={tr}>{i + 1}</td>
                     <td className={tr}>
                       <img
@@ -92,14 +132,77 @@ function Summary() {
                 ))}
               </tbody>
             </table>
-          </div>
-        ) : (
-          !isLoading && (
-            <div className="p-8 text-center text-red-600 text-xl md:text-2xl font-medium">
-              No Teams Available
+          ) : (
+            !isLoading && (
+              <div className="p-8 text-center text-red-600 text-xl md:text-2xl font-medium">
+                No Teams Available
+              </div>
+            )
+          )}
+        </div>
+      </div>
+
+      {/* Player Summary Table */}
+      <div className="mb-8">
+        <div className="overflow-x-auto">
+          <h2 className="text-center my-4 text-2xl font-medium">
+            Players in the selected team
+          </h2>
+
+          {playersByTeam?.length > 0 && !playerLoading && (
+            <div className="py-4">
+              <div className="flex items-center gap-3 border-b border-b-gray-300 px-3 py-2 hover:border-blue-500 transition">
+                <LuListFilter
+                  className="text-gray-500 group-hover:text-blue-500"
+                  size={20}
+                />
+                <input
+                  type="search"
+                  placeholder="Search Player..."
+                  value={playerSearchTerm}
+                  onChange={(e) => setPlayerSearchTerm(e.target.value)}
+                  className="w-full outline-none bg-transparent text-gray-700 placeholder-gray-400 text-lg"
+                />
+              </div>
             </div>
-          )
-        )}
+          )}
+          {filteredPlayers?.length > 0 ? (
+            playerLoading ? (
+              <Loader2 />
+            ) : (
+              <table className="w-full min-w-[1200px] border-collapse">
+                <Thead data={summaryPlayerTableHeader} />
+                <tbody>
+                  {filteredPlayers.map((player, index) => (
+                    <tr
+                      key={player.id}
+                      className="hover:bg-gray-50 cursor-pointer"
+                    >
+                      <td className={tr}>{index + 1}</td>
+                      <td className={tr}>
+                        <img
+                          src={player.player_logo}
+                          className="w-16 h-14 object-cover rounded mx-auto"
+                        />
+                      </td>
+                      <td className={tr}>{player.player_name}</td>
+                      <td className={tr}>{player.category}</td>
+                      <td className={tr}>{player.status}</td>
+                      <td className={tr}>{player.sold_team}</td>
+                      <td className={tr}>{handleAmt(player.final_bid)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )
+          ) : (
+            !playerLoading && (
+              <div className="p-8 text-center text-red-600 text-xl md:text-2xl font-medium">
+                No players available for the selected team.
+              </div>
+            )
+          )}
+        </div>
       </div>
     </div>
   );
