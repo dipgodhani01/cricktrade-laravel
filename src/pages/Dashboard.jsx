@@ -13,9 +13,12 @@ import { toast } from "react-toastify";
 import { actBtn, tr, trImg } from "../helper/style";
 import Thead from "../components/common/Thead";
 import DeletePopup from "../components/common/DeletePopup";
+import celIcon from "../assets/cel.gif";
+import { FaCopy } from "react-icons/fa";
 
 function Dashboard() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [openConfirmModal, setOpenConfirmModal] = useState(false);
   const [selectedAuctionId, setSelectedAuctionId] = useState("");
 
   const navigate = useNavigate();
@@ -27,11 +30,22 @@ function Dashboard() {
     setSelectedAuctionId(auctionId);
     setShowConfirmModal(true);
   }
+  function confirmOpen(auctionId) {
+    setSelectedAuctionId(auctionId);
+    setOpenConfirmModal(true);
+  }
 
   function handleDeleteAuctionConfirmed() {
     if (selectedAuctionId) {
       dispatch(deleteAuction({ auctionId: selectedAuctionId }));
       setShowConfirmModal(false);
+      setSelectedAuctionId("");
+    }
+  }
+  function handleOpenAuctionConfirmed() {
+    if (selectedAuctionId) {
+      navigate(`/auction/${selectedAuctionId}`);
+      setOpenConfirmModal(false);
       setSelectedAuctionId("");
     }
   }
@@ -73,7 +87,7 @@ function Dashboard() {
         ) : (
           <div className="mt-4 overflow-x-auto table-responsive">
             {auctions && auctions.length > 0 ? (
-              <table className="border-collapse w-full border mb-3 min-w-[1120px] border-black">
+              <table className="border-collapse w-full border mb-3 min-w-[1280px] border-black">
                 <Thead data={auctionListTableHeader} />
                 <tbody>
                   {auctions.map((data) => {
@@ -113,7 +127,7 @@ function Dashboard() {
                             </button>
                             <button
                               className={actBtn}
-                              onClick={() => navigate(`/auction/${data.id}`)}
+                              onClick={() => confirmOpen(data.id)}
                               title="Auction Dashboard"
                             >
                               <MdDashboard size={16} />
@@ -133,6 +147,17 @@ function Dashboard() {
                               title="Auction summary"
                             >
                               <MdSummarize size={16} />
+                            </button>
+                            <button
+                              className={actBtn}
+                              onClick={() => {
+                                const link = `${window.location.origin}/add-player/${data.id}`;
+                                navigator.clipboard.writeText(link);
+                                toast.success("Link copied!");
+                              }}
+                              title="Copy & share form link with players"
+                            >
+                              <FaCopy size={16} />
                             </button>
                           </div>
                         </td>
@@ -166,6 +191,40 @@ function Dashboard() {
           handleDeleteConfirmed={handleDeleteAuctionConfirmed}
           setShowConfirmModal={setShowConfirmModal}
         />
+      )}
+
+      {openConfirmModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="box-bg rounded-lg shadow-md w-[90%] max-w-md relative min-h-[310px] flex flex-col justify-between">
+            <div className="relative">
+              <img
+                src={celIcon}
+                alt="Auction Icon"
+                className="h-[240px] w-full object-cover rounded-md"
+              />
+              <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-md p-4">
+                <h3 className="text-white text-lg md:text-3xl font-medium text-center px-2">
+                  Are you sure you want to start the auction?
+                </h3>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-4 p-4">
+              <button
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 min-w-20 rounded"
+                onClick={handleOpenAuctionConfirmed}
+              >
+                yes, of course
+              </button>
+              <button
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 min-w-20 rounded"
+                onClick={() => setOpenConfirmModal(false)}
+              >
+                Not yet
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -173,12 +173,12 @@ function Summary() {
               <table className="w-full min-w-[1200px] border-collapse">
                 <Thead data={summaryPlayerTableHeader} />
                 <tbody>
-                  {filteredPlayers.map((player, index) => (
+                  {filteredPlayers.map((player) => (
                     <tr
                       key={player.id}
                       className="hover:bg-gray-50 cursor-pointer"
                     >
-                      <td className={tr}>{index + 1}</td>
+                      <td className={tr}>{player.index}</td>
                       <td className={tr}>
                         <img
                           src={player.player_logo}

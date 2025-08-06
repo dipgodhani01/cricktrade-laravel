@@ -8,6 +8,7 @@ import { initialPlayerData } from "../../../data/initialState";
 import { getPlayerById, updatePlayer } from "../../../redux/slice/playerSlice";
 import Loader3 from "../../common/Loader3";
 import SubmitButton from "../../common/SubmitButton";
+import { EnglishConstant } from "../../../messages/message";
 
 function EditPlayer() {
   const [formData, setFormData] = useState(initialPlayerData);
@@ -19,6 +20,7 @@ function EditPlayer() {
   const { selectedPlayer, playerLoading } = useSelector(
     (state) => state.players
   );
+  console.log(selectedPlayer);
 
   useEffect(() => {
     dispatch(getPlayerById(playerId));
@@ -48,7 +50,7 @@ function EditPlayer() {
       setImagePreview(URL.createObjectURL(value));
     }
 
-    if (value === "" || value === null) {
+    if (value === "" || (value === null && field !== "trouserSize")) {
       setError((prev) => ({
         ...prev,
         [field]: EnglishConstant[field] || "Required",
@@ -67,6 +69,7 @@ function EditPlayer() {
     Object.keys(formData).forEach((key) => {
       if (
         key !== "playerPhoto" &&
+        key !== "trouserSize" &&
         (formData[key] === "" || formData[key] === null)
       ) {
         newError[key] = EnglishConstant[key] || "Required";

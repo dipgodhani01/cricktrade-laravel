@@ -98,7 +98,9 @@ export const DashboardRoutesPath = [
   },
   {
     path: "/user-profile",
-    component: lazy(() => import("../../components/dashboard/profile/UserProfile")),
+    component: lazy(() =>
+      import("../../components/dashboard/profile/UserProfile")
+    ),
     meta: { authRoute: true },
   },
 ];
@@ -113,5 +115,13 @@ export const AuctionRoutesPath = [
     path: "/auction/summary/:auctionId",
     component: lazy(() => import("../../components/auction/Summary")),
     meta: { authRoute: true },
+  },
+];
+
+export const publicRoutePath = [
+  {
+    path: "/add-player/:auctionId",
+    component: lazy(() => import("../../pages/CreatePlayers")),
+    meta: { authRoute: false },
   },
 ];

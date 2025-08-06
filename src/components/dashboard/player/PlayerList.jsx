@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import Thead from "../../common/Thead";
 import { actBtn, tr, trUpper } from "../../../helper/style";
 import DeletePopup from "../../common/DeletePopup";
+import ReactPaginate from "react-paginate";
 
 function PlayerList() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -22,16 +23,23 @@ function PlayerList() {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [minBid, setMinBid] = useState(false);
   const [error, setError] = useState({});
+  const [currentPage, setCurrentPage] = useState(0);
   const { players, playerLoading } = useSelector((state) => state.players);
   const { auctionId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const playersPerPage = 10;
+  const offset = currentPage * playersPerPage;
+  const currentPlayers = players.slice(offset, offset + playersPerPage);
+  const pageCount = Math.ceil(players.length / playersPerPage);
 
   function confirmDelete(playerId) {
     setSelectedPlayerId(playerId);
     setShowConfirmModal(true);
   }
-
+  const handlePageClick = ({ selected }) => {
+    setCurrentPage(selected);
+  };
   function handleDeletePlayerConfirmed() {
     if (selectedPlayerId) {
       dispatch(deletePlayer({ playerId: selectedPlayerId }));
@@ -87,12 +95,12 @@ function PlayerList() {
         {playerLoading ? (
           <Loader2 />
         ) : (
-          <div className="mt-4 overflow-x-auto table-responsive">
+          <div className="mt-4 overflow-y-auto table-responsive">
             {players && players.length > 0 ? (
               <table className="border-collapse w-full border mb-3 min-w-[1180px] border-black">
                 <Thead data={playerListTableHeader} />
                 <tbody>
-                  {players.map((data) => {
+                  {currentPlayers.map((data) => {
                     return (
                       <tr key={data.id}>
                         <td className="border border-gray-200 px-4 py-2">
@@ -134,6 +142,19 @@ function PlayerList() {
                         <td className={trUpper}>{data.trouser_size || "-"}</td>
                         <td className={tr}>{data.tshirt_name}</td>
                         <td className={tr}>{data.tshirt_number}</td>
+                        <td
+                          className={`${tr} ${
+                            data.status === "sold"
+                              ? "text-green-600"
+                              : data.status === "unsold"
+                              ? "text-red-600"
+                              : data.status === "pending"
+                              ? "text-orange-600"
+                              : ""
+                          }`}
+                        >
+                          {data.status}
+                        </td>
                       </tr>
                     );
                   })}
@@ -144,6 +165,26 @@ function PlayerList() {
                 No Players Available
               </div>
             )}
+          </div>
+        )}
+        {players.length > playersPerPage && (
+          <div className="flex justify-start mt-6">
+            <ReactPaginate
+              breakLabel="..."
+              nextLabel="Next >"
+              onPageChange={handlePageClick}
+              pageRangeDisplayed={3}
+              marginPagesDisplayed={2}
+              pageCount={pageCount}
+              previousLabel="< Prev"
+              renderOnZeroPageCount={null}
+              containerClassName="flex gap-2 text-sm"
+              pageClassName="px-3 py-1 border rounded"
+              activeClassName="bg-blue-600 text-white"
+              previousClassName="px-3 py-1 border rounded"
+              nextClassName="px-3 py-1 border rounded"
+              disabledClassName="opacity-50 cursor-not-allowed"
+            />
           </div>
         )}
       </div>

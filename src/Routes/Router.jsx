@@ -5,6 +5,7 @@ import {
   AuctionRoutesPath,
   DashboardRoutesPath,
   HomeRoutesPath,
+  publicRoutePath,
 } from "./routes";
 import DashboardLayout from "../components/dashboard/DashboardLayout";
 
@@ -41,6 +42,13 @@ const Router = () => {
         ))}
       </Route>
       {AuctionRoutesPath.map((route, index) => (
+        <Route
+          key={index}
+          path={route.path}
+          element={<FinalRoute route={route} />}
+        />
+      ))}
+      {publicRoutePath.map((route, index) => (
         <Route
           key={index}
           path={route.path}

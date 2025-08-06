@@ -1,10 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap");
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
- font-family: "Jost", sans-serif;
+  font-family: "Jost", sans-serif;
 }
 
 .table-responsive::-webkit-scrollbar {
@@ -17,16 +17,28 @@
   border-radius: 10px;
 }
 
-.homeBannerSection{
-  background-image: url('./assets/home_banner.jpg');
+.homeBannerSection {
+  background-image: url("./assets/home_banner.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
 }
 
-.space_bg{
-    background-image: url('./assets/space_bg.jpg');
+.space_bg {
+  background-image: url("./assets/space_bg.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+.box-bg {
+  background-color: #1f2544;
+  background-image: radial-gradient(at 18% 13%, #1f2544 0%, transparent 60%),
+    radial-gradient(at 82% 53%, #474f7a 0%, transparent 50%),
+    radial-gradient(at 23% 39%, #81689d 0%, transparent 40%),
+    radial-gradient(at 44% 18%, #ffd0ec 0%, transparent 30%);
+}
+
+.gradient-auction-bg {
+  background-image: linear-gradient(to bottom left, #0f172a, #1e1a78, #0f172a) !important;
 }

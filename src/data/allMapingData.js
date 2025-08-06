@@ -116,6 +116,7 @@ export const playerListTableHeader = [
   "Trouser Size",
   "Tshirt Name",
   "Tshirt Number",
+  "Status",
 ];
 export const teamListTableHeader = ["Actions", "Team Logo", "Team Name"];
 export const summaryTableHeader = [

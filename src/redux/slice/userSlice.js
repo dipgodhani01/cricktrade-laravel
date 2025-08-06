@@ -14,6 +14,8 @@ export const loginWithGoogle = createAsyncThunk(
 
       localStorage.setItem("cricktrade-usertoken", token);
       localStorage.setItem("cricktrade-userdata", JSON.stringify(user));
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`; 
+
       toast.success(response?.data?.message);
 
       return { token, user };
@@ -36,6 +38,7 @@ const userSlice = createSlice({
     logout: (state) => {
       localStorage.removeItem("cricktrade-usertoken");
       localStorage.removeItem("cricktrade-userdata");
+      delete axios.defaults.headers.common["Authorization"];
       state.token = null;
       state.user = null;
       toast.success("Logout Success");
