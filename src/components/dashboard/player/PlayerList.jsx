@@ -16,6 +16,7 @@ import Thead from "../../common/Thead";
 import { actBtn, tr, trUpper } from "../../../helper/style";
 import DeletePopup from "../../common/DeletePopup";
 import ReactPaginate from "react-paginate";
+import { LuListFilter } from "react-icons/lu";
 
 function PlayerList() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -24,14 +25,19 @@ function PlayerList() {
   const [minBid, setMinBid] = useState(false);
   const [error, setError] = useState({});
   const [currentPage, setCurrentPage] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
   const { players, playerLoading } = useSelector((state) => state.players);
   const { auctionId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const playersPerPage = 10;
   const offset = currentPage * playersPerPage;
-  const currentPlayers = players.slice(offset, offset + playersPerPage);
-  const pageCount = Math.ceil(players.length / playersPerPage);
+  const filteredPlayers = players.filter((player) =>
+    player.player_name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const currentPlayers = filteredPlayers.slice(offset, offset + playersPerPage);
+  const pageCount = Math.ceil(filteredPlayers.length / playersPerPage);
 
   function confirmDelete(playerId) {
     setSelectedPlayerId(playerId);
@@ -91,13 +97,32 @@ function PlayerList() {
         >
           + Add Player
         </button>
-        <br />
+
+        <div className="py-4">
+          <div className="flex items-center gap-3 border-b border-b-gray-300 px-3 py-2 hover:border-blue-500 transition">
+            <LuListFilter
+              className="text-gray-500 group-hover:text-blue-500"
+              size={20}
+            />
+            <input
+              type="search"
+              placeholder="Search Player..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(0);
+              }}
+              className="w-full outline-none bg-transparent text-gray-700 placeholder-gray-400 text-lg"
+            />
+          </div>
+        </div>
+
         {playerLoading ? (
           <Loader2 />
         ) : (
           <div className="mt-4 overflow-y-auto table-responsive">
-            {players && players.length > 0 ? (
-              <table className="border-collapse w-full border mb-3 min-w-[1180px] border-black">
+            {currentPlayers && currentPlayers.length > 0 ? (
+              <table className="border-collapse border w-full mb-3 min-w-[1180px] border-black">
                 <Thead data={playerListTableHeader} />
                 <tbody>
                   {currentPlayers.map((data) => {
@@ -143,7 +168,7 @@ function PlayerList() {
                         <td className={tr}>{data.tshirt_name}</td>
                         <td className={tr}>{data.tshirt_number}</td>
                         <td
-                          className={`${tr} ${
+                          className={`${tr} capitalize font-medium ${
                             data.status === "sold"
                               ? "text-green-600"
                               : data.status === "unsold"

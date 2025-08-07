@@ -129,6 +129,7 @@ export const summaryTableHeader = [
   "Available Balance",
   "Reserve Points",
   "Max Bid Points",
+  "Status",
   "Download",
 ];
 export const summaryPlayerTableHeader = [

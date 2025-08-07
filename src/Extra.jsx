@@ -1,457 +1,199 @@
-// useEffect(() => {
-//   if (players && players.length > 0) {
-//     const pendingPlayers = players.filter((p) => p.status === "pending");
-//     if (pendingPlayers.length > 0) {
-//       const i = Math.floor(Math.random() * pendingPlayers.length);
-//       setRandomPlayer(pendingPlayers[i]);
-//       setCurrentBid(pendingPlayers[i]?.minimum_bid || 0);
-//       setSelectedTeam(null);
-//     } else {
-//       setRandomPlayer(null);
-//     }
-//   }
-// }, [players]);
-
-// toast.success(
-//   `${randomPlayer.player_name} has been sold to ${
-//     selectedTeam.team_name
-//   } for ₹${handleAmt(currentBid)}!`
-// );
-// 🎉 Show celebration
-
-// useEffect(() => {
-//   if (players && players.length > 0) {
-//     const pendingPlayers = players.filter((p) => p.status === "pending");
-//     if (pendingPlayers.length > 0) {
-//       const i = Math.floor(Math.random() * pendingPlayers.length);
-
-//       setRandomPlayer(pendingPlayers[i]);
-//       setCurrentBid(pendingPlayers[i]?.minimum_bid || 0);
-//       setSelectedTeam(null);
-//       setCountdown(3);
-//       setShowTimer(true);
-//     } else {
-//       setRandomPlayer(null);
-//     }
-//   }
-// }, [players]);
-
-// import { useNavigate, useParams } from "react-router-dom";
-// import Loader from "../common/Loader";
-// import { handleAmt } from "../../helper/helper";
-// import { getAllTeams } from "../../redux/slice/teamSlice";
-// import {
-//   getAllPlayers,
-//   soldPlayer,
-//   unsoldPlayer,
-// } from "../../redux/slice/playerSlice";
-// import { useEffect, useState } from "react";
+// import { useEffect, useMemo, useState } from "react";
 // import { useDispatch, useSelector } from "react-redux";
+// import { useParams } from "react-router-dom";
+// import { getAllTeams } from "../../redux/slice/teamSlice";
 // import { getAuctionById } from "../../redux/slice/auctionSlice";
-// import { toast } from "react-toastify";
+// import Loader2 from "../common/Loader2";
+// import {
+//   summaryPlayerTableHeader,
+//   summaryTableHeader,
+// } from "../../data/allMapingData";
+// import { FaCloudDownloadAlt } from "react-icons/fa";
+// import { filterPlayers, filterTeams, handleAmt } from "../../helper/helper";
+// import { tr } from "../../helper/style";
+// import Thead from "../common/Thead";
+// import { LuListFilter } from "react-icons/lu";
+// import { getPlayersByTeam } from "../../redux/slice/playerSlice";
 
-// function Auction() {
-//   const [randomPlayer, setRandomPlayer] = useState(null);
-//   const [currentBid, setCurrentBid] = useState(0);
-//   const [selectedTeam, setSelectedTeam] = useState(null);
+// function Summary() {
+//   const [searchTerm, setSearchTerm] = useState("");
+//   const [playerSearchTerm, setPlayerSearchTerm] = useState("");
 //   const { auctionId } = useParams();
 //   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-//   const { teams, loading } = useSelector((state) => state.teams);
-//   const { players } = useSelector((state) => state.players);
-//   const { selectedAuction } = useSelector((state) => state.auctions);
-
-//   useEffect(() => {
-//     dispatch(getAllTeams(auctionId));
-//     dispatch(getAllPlayers(auctionId));
-//     dispatch(getAuctionById(auctionId));
-//   }, [auctionId]);
-
-//   useEffect(() => {
-//     if (players && players.length > 0) {
-//       const pendingPlayers = players.filter((p) => p.status === "pending");
-//       if (pendingPlayers.length > 0) {
-//         const i = Math.floor(Math.random() * pendingPlayers.length);
-
-//         setRandomPlayer(pendingPlayers[i]);
-//         setCurrentBid(pendingPlayers[i]?.minimum_bid || 0);
-//         setSelectedTeam(null);
-//       } else {
-//         setRandomPlayer(null);
-//       }
-//     }
-//   }, [players]);
-
-//   const handleTeamClick = (team) => {
-//     if (!selectedAuction || !randomPlayer) return;
-//     const newBid = Number(currentBid) + Number(selectedAuction.bid_increment);
-//     if (newBid > team.remember_balance) {
-//       toast.warn("Low balance. Unable to place bid.");
-//       return;
-//     }
-//     if (!selectedTeam) {
-//       setSelectedTeam(team);
-//       return;
-//     }
-//     if (selectedTeam?.id == team?.id) {
-//       setCurrentBid(newBid);
-//       setSelectedTeam(team);
-//       return;
-//     }
-//     setSelectedTeam(team);
-//     setCurrentBid(newBid);
-//   };
-
-//   const handleSold = () => {
-//     if (!selectedTeam) {
-//       toast.error("Please choose a team first!");
-//       return;
-//     }
-//     const data = new FormData();
-//     data.append("_method", "PUT");
-//     data.append("auction_id", auctionId);
-//     data.append("player_id", randomPlayer.id);
-//     data.append("sold_team_id", selectedTeam.id);
-//     data.append("final_bid", currentBid);
-
-//     dispatch(soldPlayer(data));
-//     toast.success(
-//       `${randomPlayer.player_name} has been sold to ${
-//         selectedTeam.team_name
-//       } for ₹${handleAmt(currentBid)}!`
-//     );
-//   };
-//   const handleUnsold = () => {
-//     const data = new FormData();
-//     data.append("_method", "PUT");
-//     data.append("auction_id", auctionId);
-//     data.append("player_id", randomPlayer.id);
-
-//     dispatch(unsoldPlayer(data));
-//     toast.info(`${randomPlayer.player_name} goes Unsold!`);
-//   };
-
-//   const handleResetBid = () => {
-//     if (randomPlayer) {
-//       setCurrentBid(randomPlayer.minimum_bid || 0);
-//       setSelectedTeam(null);
-//     }
-//   };
-
-//   if (!randomPlayer) {
-//     return (
-//       <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-[#200f21] via-[#382039] to-[#5a3d5c] text-white p-4 text-center">
-//         <p className="text-2xl md:text-4xl font-medium md:block md:w-[70%]">
-//           Looks like the player list is empty. Please add players to begin the
-//           auction.
-//         </p>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div>
-//       {loading ? (
-//         <Loader />
-//       ) : (
-//         <div className="min-h-screen w-full bg-black flex flex-col lg:flex-row gap-6 p-4">
-//           <div className="w-full lg:w-[50%] text-white flex flex-col gap-4">
-//             <div className="w-full h-[350px] sm:h-[450px] md:h-[600px] overflow-hidden rounded-lg">
-//               <img
-//                 src={randomPlayer?.player_logo}
-//                 alt="Player"
-//                 className="w-full h-full object-cover rounded-md"
-//               />
-//             </div>
-
-//             <div className="p-4 bg-black">
-//               <p className="text-xl md:text-2xl lg:text-3xl font-semibold text-center">
-//                 Base Price:{" "}
-//                 <span className="text-orange-500">
-//                   {handleAmt(randomPlayer?.minimum_bid) || "0"}
-//                 </span>
-//               </p>
-//             </div>
-
-//             <div className="p-4 bg-black rounded-lg shadow-md">
-//               <h2 className="text-2xl md:text-3xl font-medium mb-4 text-center">
-//                 Player Details
-//               </h2>
-//               <div className="space-y-2">
-//                 <p className="text-lg md:text-xl">
-//                   Name :- {randomPlayer?.player_name || "N/A"}
-//                 </p>
-//                 <p className="text-lg md:text-xl">
-//                   Sports category :- {randomPlayer?.category || "-"}
-//                 </p>
-//                 <p className="text-lg md:text-xl">
-//                   Contact :- {"+91 " + randomPlayer?.phone || "-"}
-//                 </p>
-//               </div>
-//             </div>
-//           </div>
-
-//           <div className="w-full lg:w-[55%] text-white flex flex-col">
-//             <div className="grid md:grid-cols-2 gap-4">
-//               {teams && teams.length > 0 ? (
-//                 teams.map((team, i) => {
-//                   const isDisabled =
-//                     Number(team.player_allow) === team.player_buy;
-//                   return (
-//                     <button
-//                       key={i}
-//                       onClick={() => !isDisabled && handleTeamClick(team)}
-//                       disabled={isDisabled}
-//                       className={`py-1 px-4 rounded text-xl shadow text-center font-medium transition md:text-xl flex gap-4 items-center ${
-//                         selectedTeam?._id === team._id
-//                           ? "bg-green-600 hover:bg-green-700"
-//                           : "bg-purple-700 hover:bg-purple-800"
-//                       }`}
-//                     >
-//                       <div className="h-12 w-12 rounded-full overflow-hidden">
-//                         <img src={team.team_logo} alt="Team Logo" />
-//                       </div>
-//                       <span>{team.team_name}</span>
-//                     </button>
-//                   );
-//                 })
-//               ) : (
-//                 <p className="col-span-full text-center text-lg">
-//                   No Teams Available.
-//                 </p>
-//               )}
-//             </div>
-//             <div className="mt-10 gap-4 text-2xl font-medium text-center">
-//               <p>
-//                 Current Bid:{" "}
-//                 <span className="text-green-500">{handleAmt(currentBid)}</span>
-//               </p>
-//               {selectedTeam && <p>Bid by: {selectedTeam.team_name}</p>}
-//             </div>
-//             <br />
-//             <div className="mt-10 flex flex-wrap gap-4 justify-center md:justify-start">
-//               <button
-//                 onClick={handleResetBid}
-//                 className="py-2 px-8 bg-gray-600 hover:bg-gray-700 text-white rounded shadow transition"
-//               >
-//                 Reset Bid
-//               </button>
-//               <button
-//                 className="py-2 px-8 bg-orange-600 hover:bg-orange-700 text-white rounded shadow transition"
-//                 onClick={() => navigate(-1)}
-//               >
-//                 Back
-//               </button>
-//               <button
-//                 onClick={handleSold}
-//                 className={`py-2 px-8 text-white bg-green-600 hover:bg-green-700 rounded shadow transition`}
-//               >
-//                 Sold
-//               </button>
-//               <button
-//                 onClick={handleUnsold}
-//                 className="py-2 px-8 bg-red-600 hover:bg-red-700 text-white rounded shadow transition"
-//               >
-//                 Unsold
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       )}
-//     </div>
+//   const { teams, teamsLoading } = useSelector((state) => state.teams);
+//   const { playersByTeam, playerLoading } = useSelector(
+//     (state) => state.players
 //   );
-// }
-
-// export default Auction;
-
-// import * as XLSX from "xlsx";
-// import { saveAs } from "file-saver";
-
-// const exportToExcel = (data, fileName) => {
-//   const worksheet = XLSX.utils.json_to_sheet(data); // JSON → Sheet
-//   const workbook = XLSX.utils.book_new();
-//   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-
-//   const excelBuffer = XLSX.write(workbook, {
-//     bookType: "xlsx",
-//     type: "array",
-//   });
-
-//   const dataBlob = new Blob([excelBuffer], {
-//     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-//   });
-
-//   saveAs(dataBlob, `${fileName}.xlsx`);
-// };
-
-// auction before timer set
-// import { useNavigate, useParams } from "react-router-dom";
-// import { useEffect, useState } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import { toast } from "react-toastify";
-// import Loader from "../common/Loader";
-// import { handleAmt } from "../../helper/helper";
-// import { getAllTeams } from "../../redux/slice/teamSlice";
-// import {
-//   getAllPlayers,
-//   soldPlayer,
-//   unsoldPlayer,
-// } from "../../redux/slice/playerSlice";
-// import { getAuctionById } from "../../redux/slice/auctionSlice";
-// import PlayerCard from "./component/PlayerCard";
-// import TeamButton from "./component/TeamButton";
-// import AuctionActions from "./component/AuctionActions";
-
-// function Auction() {
-//   const [randomPlayer, setRandomPlayer] = useState(null);
-//   const [currentBid, setCurrentBid] = useState(0);
-//   const [selectedTeam, setSelectedTeam] = useState(null);
-//   const { auctionId } = useParams();
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
-
-//   const { teams, teamLoading } = useSelector((state) => state.teams);
-//   const { players, playerLoading } = useSelector((state) => state.players);
 //   const { selectedAuction, auctionLoading } = useSelector(
 //     (state) => state.auctions
 //   );
+//   const filteredTeams = useMemo(
+//     () => filterTeams(teams, searchTerm),
+//     [teams, searchTerm]
+//   );
+//   const filteredPlayers = useMemo(
+//     () => filterPlayers(playersByTeam, playerSearchTerm),
+//     [playersByTeam, playerSearchTerm]
+//   );
+
+//   const totalTeams = useMemo(() => teams?.length || 0, [teams]);
 
 //   useEffect(() => {
-//     dispatch(getAllTeams(auctionId));
-//     dispatch(getAllPlayers(auctionId));
 //     dispatch(getAuctionById(auctionId));
-//   }, [auctionId]);
-
-//   useEffect(() => {
-//     const pendingPlayers = players?.filter((p) => p.status === "pending") || [];
-//     if (pendingPlayers.length > 0) {
-//       const randomIndex = Math.floor(Math.random() * pendingPlayers.length);
-//       const player = pendingPlayers[randomIndex];
-//       setRandomPlayer(player);
-//       setCurrentBid(player?.minimum_bid || 0);
-//       setSelectedTeam(null);
-//     } else {
-//       setRandomPlayer(null);
-//     }
-//   }, [players]);
-
-//   const handleTeamClick = (team) => {
-//     if (!selectedAuction || !randomPlayer) return;
-//     const newBid = Number(currentBid) + Number(selectedAuction.bid_increment);
-//     if (newBid > team.remember_balance) {
-//       toast.warn("Low balance. Unable to place bid.");
-//       return;
-//     }
-//     if (!selectedTeam || selectedTeam?.id !== team?.id) {
-//       setSelectedTeam(team);
-//       setCurrentBid(newBid);
-//     } else {
-//       setCurrentBid(newBid);
-//     }
-//   };
-
-//   const handleSold = () => {
-//     if (!selectedTeam) return toast.error("Please choose a team first!");
-
-//     const data = new FormData();
-//     data.append("_method", "PUT");
-//     data.append("auction_id", auctionId);
-//     data.append("player_id", randomPlayer.id);
-//     data.append("sold_team_id", selectedTeam.id);
-//     data.append("final_bid", currentBid);
-
-//     dispatch(soldPlayer(data)).then(() => {
-//       dispatch(getAllPlayers(auctionId));
-//       dispatch(getAllTeams(auctionId));
-//     });
-
-//     toast.success(
-//       `${randomPlayer.player_name} sold to ${
-//         selectedTeam.team_name
-//       } for ₹${handleAmt(currentBid)}!`
-//     );
-//   };
-
-//   const handleUnsold = () => {
-//     const data = new FormData();
-//     data.append("_method", "PUT");
-//     data.append("auction_id", auctionId);
-//     data.append("player_id", randomPlayer.id);
-
-//     dispatch(unsoldPlayer(data)).then(() => {
-//       dispatch(getAllPlayers(auctionId));
-//       dispatch(getAllTeams(auctionId));
-//     });
-
-//     toast.info(`${randomPlayer.player_name} goes Unsold!`);
-//   };
-
-//   const handleResetBid = () => {
-//     setCurrentBid(randomPlayer?.minimum_bid || 0);
-//     setSelectedTeam(null);
-//   };
-
-//   if (!randomPlayer && !teamLoading && !playerLoading && !auctionLoading) {
-//     return (
-//       <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-[#200f21] via-[#382039] to-[#5a3d5c] text-white p-4 text-center">
-//         <p className="text-2xl md:text-4xl font-medium md:block md:w-[70%]">
-//           Looks like the player list is empty. Please add players to begin the
-//           auction.
-//         </p>
-//       </div>
-//     );
-//   }
+//     dispatch(getAllTeams(auctionId));
+//   }, [auctionId, dispatch]);
 
 //   return (
-//     <div>
-//       {playerLoading ? (
-//         <Loader />
+//     <div className="container mx-auto w-full px-4">
+//       {/* Auction Details */}
+//       {auctionLoading ? (
+//         <div className="flex justify-center items-center h-64">
+//           <Loader2 />
+//         </div>
 //       ) : (
-//         <div className="min-h-screen w-full bg-black flex flex-col lg:flex-row gap-6 p-4">
-//           <PlayerCard player={randomPlayer} />
-
-//           <div className="w-full lg:w-[55%] text-white flex flex-col">
-//             <div className="grid md:grid-cols-2 gap-4">
-//               {teams?.length > 0 ? (
-//                 teams.map((team, i) => {
-//                   const isDisabled =
-//                     Number(team.player_allow) === team.player_buy;
-//                   return (
-//                     <TeamButton
-//                       key={i}
-//                       team={team}
-//                       selectedTeam={selectedTeam}
-//                       onClick={() => !isDisabled && handleTeamClick(team)}
-//                       disabled={isDisabled}
-//                     />
-//                   );
-//                 })
-//               ) : (
-//                 <p className="col-span-full text-center text-lg">
-//                   No Teams Available.
-//                 </p>
-//               )}
-//             </div>
-
-//             <div className="mt-10 gap-4 text-2xl font-medium text-center">
-//               <p>
-//                 Current Bid:{" "}
-//                 <span className="text-green-500">{handleAmt(currentBid)}</span>
-//               </p>
-//               {selectedTeam && <p>Bid by: {selectedTeam.team_name}</p>}
-//             </div>
-
-//             <AuctionActions
-//               onReset={handleResetBid}
-//               onBack={() => navigate(-1)}
-//               onSold={handleSold}
-//               onUnsold={handleUnsold}
+//         <div className="gap-6 bg-white shadow-md rounded-2xl p-6 mb-6">
+//           <div className="text-center text-lg md:text-2xl lg:text-2xl font-medium flex flex-col justify-center gap-2">
+//             <img
+//               src={selectedAuction?.auction_logo}
+//               alt="Auction Logo"
+//               className="h-[100px] md:h-[140px] w-auto object-contain rounded-xl"
+//               loading="lazy"
 //             />
+//             <div>
+//               <p>{selectedAuction?.auction_name}</p>
+//               <p className="text-base md:text-lg text-gray-500">
+//                 A total of {totalTeams} teams have participated in this auction.
+//               </p>
+//             </div>
 //           </div>
 //         </div>
 //       )}
+
+//       {/* Team Summary Table */}
+//       <div className="mb-8">
+//         <div className="overflow-x-auto">
+//           <h2 className="text-center my-4 text-2xl font-medium">
+//             All Teams & Details
+//           </h2>
+
+//           <div className="py-4">
+//             <div className="flex items-center gap-3 border-b border-b-gray-300 px-3 py-2 hover:border-blue-500 transition">
+//               <LuListFilter
+//                 className="text-gray-500 group-hover:text-blue-500"
+//                 size={20}
+//               />
+//               <input
+//                 type="search"
+//                 placeholder="Search Team..."
+//                 value={searchTerm}
+//                 onChange={(e) => setSearchTerm(e.target.value)}
+//                 className="w-full outline-none bg-transparent text-gray-700 placeholder-gray-400 text-lg"
+//               />
+//             </div>
+//           </div>
+//           {teamsLoading ? (
+//             <Loader2 />
+//           ) : filteredTeams?.length > 0 ? (
+//             <table className="w-full min-w-[1200px] border-collapse">
+//               <Thead data={summaryTableHeader} />
+//               <tbody>
+//                 {filteredTeams.map((team, i) => (
+//                   <tr
+//                     key={team.id}
+//                     className="hover:bg-gray-50 cursor-pointer"
+//                     onClick={() => dispatch(getPlayersByTeam(team.id))}
+//                   >
+//                     <td className={tr}>{i + 1}</td>
+//                     <td className={tr}>
+//                       <img
+//                         src={team.team_logo}
+//                         alt={`${team.team_name} logo`}
+//                         className="w-16 h-14 object-cover rounded mx-auto"
+//                       />
+//                     </td>
+//                     <td className={tr}>{team.team_name}</td>
+//                     <td className={tr}>{team.player_buy}</td>
+//                     <td className={tr}>{team.player_remember}</td>
+//                     <td className={tr}>{handleAmt(team.team_balance)}</td>
+//                     <td className={tr}>{handleAmt(team.remember_balance)}</td>
+//                     <td className={tr}>{handleAmt(team.reserve_balance)}</td>
+//                     <td className={tr}>
+//                       {handleAmt(team.remember_balance - team.reserve_balance)}
+//                     </td>
+//                     <td className="border border-gray-200 px-4 py-2 text-blue-500 hover:text-blue-700">
+//                       <button className="flex items-center justify-center w-full h-full">
+//                         <FaCloudDownloadAlt size={24} />
+//                       </button>
+//                     </td>
+//                   </tr>
+//                 ))}
+//               </tbody>
+//             </table>
+//           ) : (
+//             <div className="p-8 text-center text-red-600 text-xl md:text-2xl font-medium">
+//               No teams available.
+//             </div>
+//           )}
+//         </div>
+//       </div>
+
+//       {/* Player Summary Table */}
+//       <div className="mb-8">
+//         <div className="overflow-x-auto">
+//           <h2 className="text-center my-4 text-2xl font-medium">
+//             Players in the selected team
+//           </h2>
+
+//           {playersByTeam?.length > 0 && !playerLoading && (
+//             <div className="py-4">
+//               <div className="flex items-center gap-3 border-b border-b-gray-300 px-3 py-2 hover:border-blue-500 transition">
+//                 <LuListFilter
+//                   className="text-gray-500 group-hover:text-blue-500"
+//                   size={20}
+//                 />
+//                 <input
+//                   type="search"
+//                   placeholder="Search Player..."
+//                   value={playerSearchTerm}
+//                   onChange={(e) => setPlayerSearchTerm(e.target.value)}
+//                   className="w-full outline-none bg-transparent text-gray-700 placeholder-gray-400 text-lg"
+//                 />
+//               </div>
+//             </div>
+//           )}
+//           {playerLoading ? (
+//             <Loader2 />
+//           ) : filteredPlayers?.length > 0 ? (
+//             <table className="w-full min-w-[1200px] border-collapse">
+//               <Thead data={summaryPlayerTableHeader} />
+//               <tbody>
+//                 {filteredPlayers.map((player) => (
+//                   <tr key={player.id}>
+//                     <td className={tr}>{player.index}</td>
+//                     <td className={tr}>
+//                       <img
+//                         src={player.player_logo}
+//                         className="w-16 h-14 object-cover rounded mx-auto"
+//                       />
+//                     </td>
+//                     <td className={tr}>{player.player_name}</td>
+//                     <td className={tr}>{player.category}</td>
+//                     <td className={tr}>{player.status}</td>
+//                     <td className={tr}>{player.sold_team}</td>
+//                     <td className={tr}>{handleAmt(player.final_bid)}</td>
+//                   </tr>
+//                 ))}
+//               </tbody>
+//             </table>
+//           ) : !teamsLoading ? (
+//             <div className="p-8 text-center text-red-600 text-xl md:text-2xl font-medium">
+//               No players available for the selected team.
+//             </div>
+//           ) : null}
+//         </div>
+//       </div>
 //     </div>
 //   );
 // }
 
-// export default Auction;
+// export default Summary;
