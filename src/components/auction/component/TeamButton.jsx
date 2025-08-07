@@ -1,20 +1,24 @@
-import React from "react";
+import { gradientClasses } from "../../../helper/style";
 
-function TeamButton({ team, selectedTeam, onClick, disabled }) {
+function TeamButton({ team, selectedTeam, onClick, disabled, index }) {
+  const gradient = gradientClasses[index % gradientClasses.length];
+
   return (
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`py-1 px-4 rounded text-xl shadow text-center font-medium transition md:text-xl flex gap-4 items-center ${
-        selectedTeam?._id === team._id
-          ? "bg-green-600 hover:bg-green-700"
-          : "bg-purple-700 hover:bg-purple-800"
+      className={`py-2 px-4 rounded-xl text-xl shadow text-center font-medium transition md:text-xl flex gap-4 items-center text-white ${
+        selectedTeam?.id === team.id
+          ? "bg-[conic-gradient(at_bottom_right,_var(--tw-gradient-stops))] from-[#fff1bc] via-[#7dc383] to-[#6a9c78]"
+          : `${gradient}`
       }`}
     >
-      <div className="h-12 w-12 rounded-full overflow-hidden">
+      <div className="h-14 w-14 rounded-full overflow-hidden">
         <img src={team.team_logo} alt="Team Logo" />
       </div>
-      <span>{team.team_name}</span>
+      <span className="font-medium text-2xl tracking-wider">
+        {team.team_name}
+      </span>
     </button>
   );
 }

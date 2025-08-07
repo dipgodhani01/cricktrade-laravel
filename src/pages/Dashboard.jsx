@@ -6,7 +6,6 @@ import { auctionListTableHeader } from "../data/allMapingData";
 import { formatDate, handleAmt } from "../helper/helper";
 import { MdDashboard, MdDelete, MdEdit, MdSummarize } from "react-icons/md";
 import { FaUser, FaUserGroup } from "react-icons/fa6";
-import Loader2 from "../components/common/Loader2";
 import { GrPowerReset } from "react-icons/gr";
 import { unsoldToSoldPlayerApi } from "../utils/api";
 import { toast } from "react-toastify";
@@ -15,6 +14,7 @@ import Thead from "../components/common/Thead";
 import DeletePopup from "../components/common/DeletePopup";
 import celIcon from "../assets/cel.gif";
 import { FaCopy } from "react-icons/fa";
+import Loader3D from "../components/common/Loader3D";
 
 function Dashboard() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -72,8 +72,8 @@ function Dashboard() {
   }, []);
 
   return (
-    <div>
-      <div className="bg-white p-4 rounded shadow">
+    <>
+      <div className="p-4 bg-[#951D28] text-white min-h-[calc(100vh-65px)]">
         <h2 className="text-2xl font-medium text-center">My Auction List</h2>
         <button
           className="bg-green-700 block text-white px-4 py-2 mt-4 rounded mx-auto"
@@ -83,18 +83,18 @@ function Dashboard() {
         </button>
         <br />
         {auctionLoading ? (
-          <Loader2 />
+          <Loader3D />
         ) : (
           <div className="mt-4 overflow-x-auto table-responsive">
             {auctions && auctions.length > 0 ? (
-              <table className="border-collapse w-full border mb-3 min-w-[1280px] border-black">
+              <table className="border-collapse w-full mb-3 min-w-[1280px] ">
                 <Thead data={auctionListTableHeader} />
-                <tbody>
+                <tbody className="bg-[#A42937]">
                   {auctions.map((data) => {
                     return (
                       <tr key={data.id}>
-                        <td className="border border-gray-200 px-4 py-2">
-                          <div className="flex gap-2 text-blue-800">
+                        <td className="border border-[#F6EEDF] px-4 py-2">
+                          <div className="flex gap-2 text-white">
                             <button
                               className={actBtn}
                               onClick={() =>
@@ -195,7 +195,7 @@ function Dashboard() {
 
       {openConfirmModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="box-bg rounded-lg shadow-md w-[90%] max-w-md relative min-h-[310px] flex flex-col justify-between">
+          <div className="bg-[conic-gradient(at_top_left,_var(--tw-gradient-stops))] from-[#202040] via-[#202060] to-[#602080] rounded-lg shadow-md w-[90%] max-w-md relative min-h-[310px] flex flex-col justify-between">
             <div className="relative">
               <img
                 src={celIcon}
@@ -209,15 +209,15 @@ function Dashboard() {
               </div>
             </div>
 
-            <div className="flex justify-end gap-4 p-4">
+            <div className="flex justify-end gap-4 p-4 font-sans font-medium tracking-wide">
               <button
-                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 min-w-20 rounded"
+                className="bg-gradient-to-r from-green-600 via-green-600 to-green-700 text-white px-4 py-2 min-w-20 rounded"
                 onClick={handleOpenAuctionConfirmed}
               >
-                yes, of course
+                Yes, of course
               </button>
               <button
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 min-w-20 rounded"
+                className="bg-gradient-to-r from-red-500 via-red-700 to-red-700 text-white px-4 py-2 min-w-20 rounded"
                 onClick={() => setOpenConfirmModal(false)}
               >
                 Not yet
@@ -226,7 +226,7 @@ function Dashboard() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
 

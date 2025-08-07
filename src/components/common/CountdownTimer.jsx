@@ -1,8 +1,6 @@
 function CountdownTimer() {
   return (
-    <div className="relative w-[200px] h-[200px] rounded-full overflow-hidden bg-[radial-gradient(circle,rgba(255,255,255,0.05)_30%,transparent_70%)]">
-      <div className="absolute inset-0 rounded-full border-t-[4px] border-t-white/60 border-transparent animate-spin"></div>
-
+    <div className="relative w-[200px] h-[200px] rounded-full overflow-hidden bg-transparent">
       <div
         className="absolute inset-[10%] rounded-full animate-[spinReverse_1.5s_linear_infinite] blur-[2px]"
         style={{

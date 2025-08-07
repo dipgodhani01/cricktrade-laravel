@@ -132,7 +132,7 @@ function Auction() {
 
   if (showTimer) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-tl from-[#030637] via-[#3c0753] to-[#720455]">
         <CountdownTimer
           initialTime={3}
           onComplete={() => setShowTimer(false)}
@@ -143,7 +143,7 @@ function Auction() {
 
   if (transitioning) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-tl from-[#030637] via-[#3c0753] to-[#720455]">
         <CountdownTimer initialTime={3} onComplete={() => {}} />
       </div>
     );
@@ -152,7 +152,7 @@ function Auction() {
   return (
     <div>
       {randomPlayer ? (
-        <div className="min-h-screen w-full bg-black flex flex-col lg:flex-row gap-6 p-4">
+        <div className="min-h-screen w-full bg-gradient-to-tl from-[#030637] via-[#3c0753] to-[#720455] flex flex-col lg:flex-row gap-6 p-4">
           <PlayerCard player={randomPlayer} />
 
           <div className="w-full lg:w-[55%] text-white flex flex-col">
@@ -168,17 +168,18 @@ function Auction() {
                     selectedTeam={selectedTeam}
                     onClick={() => !isDisabled && handleTeamClick(team)}
                     disabled={isDisabled}
+                    index={i}
                   />
                 );
               })}
             </div>
 
-            <div className="mt-10 gap-4 text-2xl font-medium text-center">
+            <div className="mt-10 gap-4 text-3xl tracking-wider font-medium text-center bg-black/30 p-4">
               <p>
-                Current Bid:{" "}
+                Current Bid :{" "}
                 <span className="text-green-500">{handleAmt(currentBid)}</span>
               </p>
-              {selectedTeam && <p>Bid by: {selectedTeam.team_name}</p>}
+              <p>Bid by : {selectedTeam ? selectedTeam.team_name : "-"}</p>
             </div>
 
             <AuctionActions
