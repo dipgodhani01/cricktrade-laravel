@@ -14,6 +14,7 @@ import PlayerCard from "./component/PlayerCard";
 import TeamButton from "./component/TeamButton";
 import AuctionActions from "./component/AuctionActions";
 import CountdownTimer from "../common/CountdownTimer";
+import Loader3D from "../common/Loader3D";
 
 function Auction() {
   const [randomPlayer, setRandomPlayer] = useState(null);
@@ -117,7 +118,7 @@ function Auction() {
       setTransitioning(true);
       const timer = setTimeout(() => {
         setTransitioning(false);
-      }, 3000);
+      }, 2500);
 
       return () => clearTimeout(timer);
     });
@@ -133,10 +134,7 @@ function Auction() {
   if (showTimer) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-tl from-[#030637] via-[#3c0753] to-[#720455]">
-        <CountdownTimer
-          initialTime={3}
-          onComplete={() => setShowTimer(false)}
-        />
+        <Loader3D transparent={true} />
       </div>
     );
   }
@@ -144,7 +142,7 @@ function Auction() {
   if (transitioning) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-tl from-[#030637] via-[#3c0753] to-[#720455]">
-        <CountdownTimer initialTime={3} onComplete={() => {}} />
+        <Loader3D transparent={true} />
       </div>
     );
   }

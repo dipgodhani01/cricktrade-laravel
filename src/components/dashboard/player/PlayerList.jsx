@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { playerListTableHeader } from "../../../data/allMapingData";
 import { useNavigate, useParams } from "react-router-dom";
-import Loader2 from "../../common/Loader2";
 import { MdCurrencyRupee, MdDelete, MdEdit } from "react-icons/md";
 import {
   deletePlayer,
@@ -13,10 +12,11 @@ import Formfields from "../../common/Formfields";
 import { EnglishConstant } from "../../../messages/message";
 import { toast } from "react-toastify";
 import Thead from "../../common/Thead";
-import { actBtn, tr, trUpper } from "../../../helper/style";
+import { actBtn, notFound, tr, trUpper } from "../../../helper/style";
 import DeletePopup from "../../common/DeletePopup";
 import ReactPaginate from "react-paginate";
-import { LuListFilter } from "react-icons/lu";
+import Loader3D from "../../common/Loader3D";
+import SearchFilter from "../../common/SearchFilter";
 
 function PlayerList() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -87,8 +87,8 @@ function PlayerList() {
 
   return (
     <div>
-      <div className="bg-white p-4 rounded shadow">
-        <h2 className="text-2xl font-medium text-center mb-4">
+      <div className="bg-[#FAF4E1] p-4 rounded shadow min-h-[calc(100vh-65px)] text-[#A40000]">
+        <h2 className="text-2xl font-medium text-center mb-2">
           All Player List
         </h2>
         <button
@@ -98,37 +98,27 @@ function PlayerList() {
           + Add Player
         </button>
 
-        <div className="py-4">
-          <div className="flex items-center gap-3 border-b border-b-gray-300 px-3 py-2 hover:border-blue-500 transition">
-            <LuListFilter
-              className="text-gray-500 group-hover:text-blue-500"
-              size={20}
-            />
-            <input
-              type="search"
-              placeholder="Search Player..."
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(0);
-              }}
-              className="w-full outline-none bg-transparent text-gray-700 placeholder-gray-400 text-lg"
-            />
-          </div>
-        </div>
+        <SearchFilter
+          placeholder="Search Player..."
+          value={searchTerm}
+          handleChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(0);
+          }}
+        />
 
         {playerLoading ? (
-          <Loader2 />
+          <Loader3D />
         ) : (
-          <div className="mt-4 overflow-y-auto table-responsive">
+          <div className="mt-2 overflow-y-auto table-responsive">
             {currentPlayers && currentPlayers.length > 0 ? (
-              <table className="border-collapse border w-full mb-3 min-w-[1180px] border-black">
+              <table className="border-collapse border w-full mb-3 min-w-[1180px]">
                 <Thead data={playerListTableHeader} />
                 <tbody>
                   {currentPlayers.map((data) => {
                     return (
                       <tr key={data.id}>
-                        <td className="border border-gray-200 px-4 py-2">
+                        <td className="border border-[#3f230575] px-4 py-2">
                           <div className="flex gap-2 text-blue-800">
                             <button
                               className={actBtn}
@@ -137,14 +127,14 @@ function PlayerList() {
                                 navigate(`/edit-player/${data.id}`)
                               }
                             >
-                              <MdEdit size={20} />
+                              <MdEdit size={18} />
                             </button>
                             <button
                               className={actBtn}
                               title="Delete Player"
                               onClick={() => confirmDelete(data.id)}
                             >
-                              <MdDelete size={20} />
+                              <MdDelete size={18} />
                             </button>
                             <button
                               className={actBtn}
@@ -155,7 +145,7 @@ function PlayerList() {
                                 setShowUpdateModal(true);
                               }}
                             >
-                              <MdCurrencyRupee size={20} />
+                              <MdCurrencyRupee size={18} />
                             </button>
                           </div>
                         </td>
@@ -168,7 +158,7 @@ function PlayerList() {
                         <td className={tr}>{data.tshirt_name}</td>
                         <td className={tr}>{data.tshirt_number}</td>
                         <td
-                          className={`${tr} capitalize font-medium ${
+                          className={`${tr} capitalize font-medium border border-[#3f230575] ${
                             data.status === "sold"
                               ? "text-green-600"
                               : data.status === "unsold"
@@ -186,13 +176,11 @@ function PlayerList() {
                 </tbody>
               </table>
             ) : (
-              <div className="p-4 text-center text-red-600 text-xl md:text-2xl font-medium">
-                No Players Available
-              </div>
+              <div className={notFound}>No Players Available</div>
             )}
           </div>
         )}
-        {players.length > playersPerPage && (
+        {players.length > playersPerPage && !playerLoading && (
           <div className="flex justify-start mt-6">
             <ReactPaginate
               breakLabel="..."

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -10,8 +10,8 @@ import { addAuction } from "../../../data/allMapingData";
 import { toast } from "react-toastify";
 import { initialAuctionData } from "../../../data/initialState";
 import { EnglishConstant } from "../../../messages/message";
-import Loader3 from "../../common/Loader3";
 import SubmitButton from "../../common/SubmitButton";
+import Chakra from "../../common/Chakra";
 
 function EditAuction() {
   const [formData, setFormData] = useState(initialAuctionData);
@@ -115,45 +115,50 @@ function EditAuction() {
   };
 
   return (
-    <div className="p-4 bg-white rounded shadow">
-      <h2 className="text-xl font-semibold mb-4">Edit Auction</h2>
-      <form onSubmit={onFormSubmit}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {imagePreview && (
-            <div>
-              <img
-                src={imagePreview}
-                alt="Preview"
-                className="w-38 h-28 object-cover border rounded"
+    <div className="bg-[#FAF4E1] p-4 min-h-[calc(100vh-65px)]">
+      <div className="p-4 md:p-12 flex items-center justify-center flex-col bg-[#FAF0E6] w-fit mx-auto shadow-lg">
+        <h2 className="text-2xl md:text-3xl font-medium md:mb-12 mb-2 text-[#8E0505]">
+          Edit Auction
+        </h2>
+        <form onSubmit={onFormSubmit}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {imagePreview && (
+              <div>
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="w-38 h-28 object-cover border rounded"
+                />
+              </div>
+            )}
+            {addAuction({ ...formData, error, onChangeField }).map((item) => (
+              <Formfields
+                key={item.id}
+                type={item.type}
+                label={item.label}
+                placeholder={item.placeholder}
+                options={item.options}
+                name={item.name}
+                value={
+                  item.type === "file" ? undefined : formData[item.name] || ""
+                }
+                onChange={(e) =>
+                  onChangeField(
+                    item.name,
+                    item.type === "file" ? e.target.files[0] : e.target.value
+                  )
+                }
+                error={error[item.name]}
               />
-            </div>
+            ))}
+          </div>
+          {!auctionLoading ? (
+            <SubmitButton green={true} title="Update Auction" />
+          ) : (
+            <Chakra />
           )}
-          {addAuction({ ...formData, error, onChangeField }).map((item) => (
-            <Formfields
-              key={item.id}
-              type={item.type}
-              label={item.label}
-              placeholder={item.placeholder}
-              options={item.options}
-              name={item.name}
-              value={
-                item.type === "file" ? undefined : formData[item.name] || ""
-              }
-              onChange={(e) =>
-                onChangeField(
-                  item.name,
-                  item.type === "file" ? e.target.files[0] : e.target.value
-                )
-              }
-              error={error[item.name]}
-            />
-          ))}
-        </div>
-        <SubmitButton
-          green={true}
-          title={!auctionLoading ? "Update Auction" : <Loader3 />}
-        />
-      </form>
+        </form>
+      </div>
     </div>
   );
 }

@@ -8,10 +8,15 @@ import { deleteTeam, getAllTeams } from "../../../redux/slice/teamSlice";
 import { actBtn, th, tr, trImg } from "../../../helper/style";
 import Thead from "../../common/Thead";
 import DeletePopup from "../../common/DeletePopup";
+import Loader3D from "../../common/Loader3D";
+import { RxCross2 } from "react-icons/rx";
+import { FaImage } from "react-icons/fa";
 
 function TeamList() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [selectedTeamId, setSelectedTeamId] = useState("");
+  const [imagePopupOpen, setImagePopupOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
   const { teams, teamLoading } = useSelector((state) => state.teams);
   const { auctionId } = useParams();
   const navigate = useNavigate();
@@ -36,7 +41,7 @@ function TeamList() {
 
   return (
     <div>
-      <div className="bg-white p-4 rounded shadow">
+      <div className="bg-[#FAF4E1] p-4 min-h-[calc(100vh-65px)] rounded shadow">
         <h2 className="text-2xl font-medium text-center mb-4">
           All Teams List
         </h2>
@@ -48,18 +53,18 @@ function TeamList() {
         </button>
         <br />
         {teamLoading ? (
-          <Loader2 />
+          <Loader3D />
         ) : (
           <div className="mt-4 overflow-x-auto table-responsive">
             {teams && teams.length > 0 ? (
               <table className="border-collapse w-full border mb-3 md:w-[600px] border-black">
                 <Thead data={teamListTableHeader} />
-                <tbody>
+                <tbody className="font-medium text-lg">
                   {teams.map((data) => {
                     return (
                       <tr key={data.id}>
-                        <td className="border border-gray-200 px-4 py-2">
-                          <div className="flex gap-2 text-blue-800">
+                        <td className="border border-[#3f230575] px-4 py-2">
+                          <div className="flex gap-2">
                             <button
                               className={actBtn}
                               onClick={() => navigate(`/edit-team/${data.id}`)}
@@ -70,9 +75,18 @@ function TeamList() {
                             <button
                               className={actBtn}
                               onClick={() => confirmDelete(data.id)}
-                              title="Delete Team"
                             >
                               <MdDelete size={20} />
+                            </button>
+                            <button
+                              className={actBtn}
+                              title="View Team Logo"
+                              onClick={() => {
+                                setSelectedImage(data?.team_logo);
+                                setImagePopupOpen(true);
+                              }}
+                            >
+                              <FaImage size={16} />
                             </button>
                           </div>
                         </td>
@@ -100,6 +114,26 @@ function TeamList() {
           handleDeleteConfirmed={handleDeleteTeamConfirmed}
           setShowConfirmModal={setShowConfirmModal}
         />
+      )}
+      {imagePopupOpen && selectedImage && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 transition-opacity duration-300"
+          onClick={() => setImagePopupOpen(false)}
+        >
+          <div className="w-[90%] max-w-xl bg-transparent rounded-lg shadow-lg overflow-hidden p-4">
+            <button
+              onClick={() => setImagePopupOpen(false)}
+              className="text-white bg-[#AA2B1D] hover:bg-red-700 w-10 h-10 rounded-full flex items-center justify-center text-xl p-2 ml-auto mb-2"
+            >
+              <RxCross2 />
+            </button>
+            <img
+              src={selectedImage}
+              alt="Auction Logo"
+              className="w-full h-auto object-contain rounded"
+            />
+          </div>
+        </div>
       )}
     </div>
   );

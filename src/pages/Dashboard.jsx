@@ -4,27 +4,28 @@ import { deleteAuction, getUserAuctions } from "../redux/slice/auctionSlice";
 import { useEffect, useState } from "react";
 import { auctionListTableHeader } from "../data/allMapingData";
 import { formatDate, handleAmt } from "../helper/helper";
-import { MdDashboard, MdDelete, MdEdit, MdSummarize } from "react-icons/md";
-import { FaUser, FaUserGroup } from "react-icons/fa6";
-import { GrPowerReset } from "react-icons/gr";
 import { unsoldToSoldPlayerApi } from "../utils/api";
 import { toast } from "react-toastify";
-import { actBtn, tr, trImg } from "../helper/style";
+import { actBtn, tr } from "../helper/style";
 import Thead from "../components/common/Thead";
 import DeletePopup from "../components/common/DeletePopup";
-import celIcon from "../assets/cel.gif";
-import { FaCopy } from "react-icons/fa";
 import Loader3D from "../components/common/Loader3D";
+import { RxCross2 } from "react-icons/rx";
+import AuctionActionButtons from "../components/common/AuctionActionButtons";
+import AuctionStartPopup from "../components/common/AuctionStartPopup";
 
 function Dashboard() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
   const [selectedAuctionId, setSelectedAuctionId] = useState("");
+  const [imagePopupOpen, setImagePopupOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.user.user.user_id);
   const { auctions, auctionLoading } = useSelector((state) => state.auctions);
+  console.log(selectedImage);
 
   function confirmDelete(auctionId) {
     setSelectedAuctionId(auctionId);
@@ -73,7 +74,7 @@ function Dashboard() {
 
   return (
     <>
-      <div className="p-4 bg-[#951D28] text-white min-h-[calc(100vh-65px)]">
+      <div className="p-4 bg-[#FAF4E1] text-[#A40000] min-h-[calc(100vh-65px)]">
         <h2 className="text-2xl font-medium text-center">My Auction List</h2>
         <button
           className="bg-green-700 block text-white px-4 py-2 mt-4 rounded mx-auto"
@@ -87,82 +88,23 @@ function Dashboard() {
         ) : (
           <div className="mt-4 overflow-x-auto table-responsive">
             {auctions && auctions.length > 0 ? (
-              <table className="border-collapse w-full mb-3 min-w-[1280px] ">
+              <table className="border-collapse w-full mb-3 min-w-[1280px] shadow-md">
                 <Thead data={auctionListTableHeader} />
-                <tbody className="bg-[#A42937]">
+                <tbody className="bg-[#FFFEEC]">
                   {auctions.map((data) => {
                     return (
                       <tr key={data.id}>
-                        <td className="border border-[#F6EEDF] px-4 py-2">
-                          <div className="flex gap-2 text-white">
-                            <button
-                              className={actBtn}
-                              onClick={() =>
-                                navigate(`/edit-auction/${data.id}`)
-                              }
-                              title="Edit Auction"
-                            >
-                              <MdEdit size={20} />
-                            </button>
-                            <button
-                              className={actBtn}
-                              onClick={() => confirmDelete(data.id)}
-                              title="Delete Auction"
-                            >
-                              <MdDelete size={20} />
-                            </button>
-                            <button
-                              className={actBtn}
-                              onClick={() => navigate(`/players/${data.id}`)}
-                              title="All Players"
-                            >
-                              <FaUser size={16} />
-                            </button>
-                            <button
-                              className={actBtn}
-                              onClick={() => navigate(`/teams/${data.id}`)}
-                              title="All Teams"
-                            >
-                              <FaUserGroup size={16} />
-                            </button>
-                            <button
-                              className={actBtn}
-                              onClick={() => confirmOpen(data.id)}
-                              title="Auction Dashboard"
-                            >
-                              <MdDashboard size={16} />
-                            </button>
-                            <button
-                              className={actBtn}
-                              onClick={() => unsoldToSold(data.id)}
-                              title="Mark all unsold player are available for auction"
-                            >
-                              <GrPowerReset size={16} />
-                            </button>
-                            <button
-                              className={actBtn}
-                              onClick={() =>
-                                navigate(`/auction/summary/${data.id}`)
-                              }
-                              title="Auction summary"
-                            >
-                              <MdSummarize size={16} />
-                            </button>
-                            <button
-                              className={actBtn}
-                              onClick={() => {
-                                const link = `${window.location.origin}/add-player/${data.id}`;
-                                navigator.clipboard.writeText(link);
-                                toast.success("Link copied!");
-                              }}
-                              title="Copy & share form link with players"
-                            >
-                              <FaCopy size={16} />
-                            </button>
-                          </div>
-                        </td>
-                        <td className={tr}>
-                          <img src={data?.auction_logo} className={trImg} />
+                        <td className="border border-[#3f230575] px-4 py-2">
+                          <AuctionActionButtons
+                            auctionId={data.id}
+                            auctionLogo={data.auction_logo}
+                            actBtn={actBtn}
+                            confirmDelete={confirmDelete}
+                            confirmOpen={confirmOpen}
+                            unsoldToSold={unsoldToSold}
+                            setSelectedImage={setSelectedImage}
+                            setImagePopupOpen={setImagePopupOpen}
+                          />
                         </td>
                         <td className={tr}>{data.auction_name}</td>
                         <td className={tr}>{data.sports_type}</td>
@@ -194,35 +136,29 @@ function Dashboard() {
       )}
 
       {openConfirmModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-[conic-gradient(at_top_left,_var(--tw-gradient-stops))] from-[#202040] via-[#202060] to-[#602080] rounded-lg shadow-md w-[90%] max-w-md relative min-h-[310px] flex flex-col justify-between">
-            <div className="relative">
-              <img
-                src={celIcon}
-                alt="Auction Icon"
-                className="h-[240px] w-full object-cover rounded-md"
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-md p-4">
-                <h3 className="text-white text-lg md:text-3xl font-medium text-center px-2">
-                  Are you sure you want to start the auction?
-                </h3>
-              </div>
-            </div>
+        <AuctionStartPopup
+          handleOpenConfirmed={handleOpenAuctionConfirmed}
+          setOpenConfirmModal={setOpenConfirmModal}
+        />
+      )}
 
-            <div className="flex justify-end gap-4 p-4 font-sans font-medium tracking-wide">
-              <button
-                className="bg-gradient-to-r from-green-600 via-green-600 to-green-700 text-white px-4 py-2 min-w-20 rounded"
-                onClick={handleOpenAuctionConfirmed}
-              >
-                Yes, of course
-              </button>
-              <button
-                className="bg-gradient-to-r from-red-500 via-red-700 to-red-700 text-white px-4 py-2 min-w-20 rounded"
-                onClick={() => setOpenConfirmModal(false)}
-              >
-                Not yet
-              </button>
-            </div>
+      {imagePopupOpen && selectedImage && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 transition-opacity duration-300"
+          onClick={() => setImagePopupOpen(false)}
+        >
+          <div className="w-[90%] max-w-xl bg-transparent rounded-lg shadow-lg overflow-hidden p-4">
+            <button
+              onClick={() => setImagePopupOpen(false)}
+              className="text-white bg-[#AA2B1D] hover:bg-red-700 w-10 h-10 rounded-full flex items-center justify-center text-xl p-2 ml-auto mb-2"
+            >
+              <RxCross2 />
+            </button>
+            <img
+              src={selectedImage}
+              alt="Auction Logo"
+              className="w-full h-auto object-contain rounded"
+            />
           </div>
         </div>
       )}

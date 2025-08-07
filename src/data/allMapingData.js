@@ -96,7 +96,6 @@ export const addAuction = ({
 
 export const auctionListTableHeader = [
   "Actions",
-  "Auction Logo",
   "Auction Name",
   "Type Of Sport",
   "Points Per Team",
@@ -119,7 +118,7 @@ export const playerListTableHeader = [
   "Status",
 ];
 export const teamListTableHeader = ["Actions", "Team Logo", "Team Name"];
-export const summaryTableHeader = [
+export const summaryTeamTableHeader = [
   "No.",
   "Team Logo",
   "Team Name",
