@@ -21,11 +21,11 @@ const FinalRoute = ({ route }) => {
       </div>
     );
   }
-  // ✅ Agar ye home page hai aur user hai
+
   if (user && route.path === "/home") {
     return <Navigate to="/dashboard" replace />;
   }
-  // Agar auth route hai aur user nahi hai
+
   if (!user && route?.meta?.authRoute) {
     return <Navigate to="/home" replace />;
   }
@@ -35,8 +35,24 @@ const FinalRoute = ({ route }) => {
 };
 
 const Router = () => {
+  const { user, loading } = useSelector((state) => state.user);
+
   return (
     <Routes>
+      <Route
+        path="/"
+        element={
+          loading ? (
+            <div className="absolute bg-white flex items-center justify-center top-0 left-0 h-screen w-full z-[1000000]">
+              <Loader1 />
+            </div>
+          ) : user ? (
+            <Navigate to="/dashboard" />
+          ) : (
+            <Navigate to="/home" />
+          )
+        }
+      />
       <Route element={<Layout />}>
         {HomeRoutesPath.map((route, index) => (
           <Route

@@ -3,9 +3,12 @@ import bannerImg from "../assets/home_banner.jpg";
 import GoogleOAuthWrapper from "../auth/GoogleOAuthWrapper";
 import Features from "../components/home/Features";
 import Steps from "../components/home/Steps";
+import { useSelector } from "react-redux";
 
 function Home() {
   const [openModal, setOpenModal] = useState(false);
+  const user = useSelector((state) => state.user.user);
+  console.log(user);
 
   return (
     <div>
