@@ -20,7 +20,6 @@ function EditPlayer() {
   const { selectedPlayer, playerLoading } = useSelector(
     (state) => state.players
   );
-  console.log(selectedPlayer);
 
   useEffect(() => {
     dispatch(getPlayerById(playerId));

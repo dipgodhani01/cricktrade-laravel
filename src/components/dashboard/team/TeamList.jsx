@@ -11,6 +11,7 @@ import DeletePopup from "../../common/DeletePopup";
 import Loader3D from "../../common/Loader3D";
 import { RxCross2 } from "react-icons/rx";
 import { FaImage } from "react-icons/fa";
+import Loader1 from "../../common/Loader1";
 
 function TeamList() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -53,7 +54,7 @@ function TeamList() {
         </button>
         <br />
         {teamLoading ? (
-          <Loader3D />
+          <Loader1 />
         ) : (
           <div className="mt-4 overflow-x-auto table-responsive">
             {teams && teams.length > 0 ? (

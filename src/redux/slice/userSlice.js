@@ -1,47 +1,60 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { getUser, googleAuth, logoutApi } from "../../utils/api";
 import { toast } from "react-toastify";
-import { googleAuth } from "../../utils/api";
-
-axios.defaults.withCredentials = true;
 
 export const loginWithGoogle = createAsyncThunk(
   "user/loginWithGoogle",
   async (code, { rejectWithValue }) => {
     try {
       const response = await googleAuth(code);
-      const { token, user } = response.data;
+      const { user } = response.data;
+      toast.success(response.data.message);
 
-      localStorage.setItem("cricktrade-usertoken", token);
-      localStorage.setItem("cricktrade-userdata", JSON.stringify(user));
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`; 
-
-      toast.success(response?.data?.message);
-
-      return { token, user };
+      return { user };
     } catch (error) {
-  
-      return rejectWithValue(error?.response?.data?.message);
+      return rejectWithValue(error?.response?.data?.message || "Login failed");
+    }
+  }
+);
+
+export const logout = createAsyncThunk(
+  "user/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await logoutApi();
+      toast.success(response.data.message);
+      return;
+    } catch (error) {
+      return rejectWithValue(error?.response?.data?.message || "Logout failed");
+    }
+  }
+);
+export const fetchAuthenticatedUser = createAsyncThunk(
+  "user/fetchAuthenticatedUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await getUser();      
+      return response.data.user;
+    } catch (error) {
+      return rejectWithValue(
+        error?.response?.data?.message || "Failed to fetch user"
+      );
     }
   }
 );
 
 const userSlice = createSlice({
   name: "user",
-  initialState: {
-    token: localStorage.getItem("cricktrade-usertoken") || null,
-    user: JSON.parse(localStorage.getItem("cricktrade-userdata")) || null,
-    loading: false,
-    error: null,
-  },
+initialState: {
+  user: null,
+  loading: true, 
+  error: null,
+},
   reducers: {
-    logout: (state) => {
-      localStorage.removeItem("cricktrade-usertoken");
-      localStorage.removeItem("cricktrade-userdata");
-      delete axios.defaults.headers.common["Authorization"];
-      state.token = null;
+    clearUserState: (state) => {
       state.user = null;
-      toast.success("Logout Success");
+      state.loading = false;
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
@@ -52,16 +65,30 @@ const userSlice = createSlice({
       })
       .addCase(loginWithGoogle.fulfilled, (state, action) => {
         state.loading = false;
-        state.token = action.payload.token;
         state.user = action.payload.user;
       })
       .addCase(loginWithGoogle.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(fetchAuthenticatedUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAuthenticatedUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(fetchAuthenticatedUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.user = null;
       });
   },
 });
 
-export const { logout } = userSlice.actions;
+export const { clearUserState } = userSlice.actions;
 const userReducer = userSlice.reducer;
 export default userReducer;

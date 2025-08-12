@@ -13,6 +13,7 @@ import Loader3D from "../components/common/Loader3D";
 import { RxCross2 } from "react-icons/rx";
 import AuctionActionButtons from "../components/common/AuctionActionButtons";
 import AuctionStartPopup from "../components/common/AuctionStartPopup";
+import Loader1 from "../components/common/Loader1";
 
 function Dashboard() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -25,7 +26,6 @@ function Dashboard() {
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.user.user.user_id);
   const { auctions, auctionLoading } = useSelector((state) => state.auctions);
-  console.log(selectedImage);
 
   function confirmDelete(auctionId) {
     setSelectedAuctionId(auctionId);
@@ -84,7 +84,7 @@ function Dashboard() {
         </button>
         <br />
         {auctionLoading ? (
-          <Loader3D />
+          <Loader1 />
         ) : (
           <div className="mt-4 overflow-x-auto table-responsive">
             {auctions && auctions.length > 0 ? (

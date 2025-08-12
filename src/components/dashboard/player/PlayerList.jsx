@@ -17,6 +17,7 @@ import DeletePopup from "../../common/DeletePopup";
 import ReactPaginate from "react-paginate";
 import Loader3D from "../../common/Loader3D";
 import SearchFilter from "../../common/SearchFilter";
+import Loader1 from "../../common/Loader1";
 
 function PlayerList() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -108,7 +109,7 @@ function PlayerList() {
         />
 
         {playerLoading ? (
-          <Loader3D />
+          <Loader1 />
         ) : (
           <div className="mt-2 overflow-y-auto table-responsive">
             {currentPlayers && currentPlayers.length > 0 ? (
