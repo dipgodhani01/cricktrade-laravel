@@ -6,8 +6,8 @@ import { createPlayer } from "../redux/slice/playerSlice";
 import Formfields from "../components/common/Formfields";
 import { addPlayer } from "../data/allMapingData";
 import SubmitButton from "../components/common/SubmitButton";
-import Loader3 from "../components/common/Loader3";
 import { EnglishConstant } from "../messages/message";
+import Chakra from "../components/common/Chakra";
 
 function CreatePlayers() {
   const [imagePreview, setImagePreview] = useState(null);
@@ -127,7 +127,7 @@ function CreatePlayers() {
         </div>
         <SubmitButton
           green={false}
-          title={!playerLoading ? "Add Player" : <Loader3 />}
+          title={!playerLoading ? "Add Player" : <Chakra />}
         />
       </form>
     </div>

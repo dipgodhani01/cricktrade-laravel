@@ -4,7 +4,7 @@ import { LiaLongArrowAltDownSolid } from "react-icons/lia";
 function Steps() {
   return (
     <div className="container mx-auto pt-2 pb-5 px-3 sm:p-5 text-center">
-      <h1 className="text-3xl font-bold">Steps</h1>
+      <h1 className="text-3xl font-bold mb-4">Steps</h1>
       <p className="text-base sm:text-xl">
         Here are the steps you need to complete in order to do a successful
         auction on Cricktrade.

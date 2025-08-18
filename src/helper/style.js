@@ -10,7 +10,7 @@ export const soldBtn = `py-3 px-12 text-white rounded-md shadow hover:ring-2 hov
 export const unsoldBtn = `py-3 px-12 text-white rounded-md shadow hover:ring-2 hover:ring-sky-400 transition bg-gradient-to-r from-rose-700 via-red-600 to-red-800`
 export const sidebarLink =`flex bg-[#AA2B1D] hover:bg-[#A12631] p-2 w-full rounded font-sans tracking-wider gap-2 items-center text-lg font-medium transition text-white`
 export const notFound = 'p-6 text-center text-red-600 text-xl md:text-2xl font-medium'
-export const searchContainer = 'flex items-center gap-3 border-b border-[#931A25] px-3 py-4 hover:border-[#AA2B1D] transition text-[#AA2B1D]'
+export const searchContainer = 'flex items-center gap-3 border-b border-[#931A25] px-3 py-2 hover:border-[#AA2B1D] transition text-[#AA2B1D]'
 export const searchField = 'w-full outline-none bg-transparent placeholder-[#a13a3a] text-lg'
 export const gradientClasses = [
   "bg-gradient-to-r from-gray-800 via-gray-900 to-black",

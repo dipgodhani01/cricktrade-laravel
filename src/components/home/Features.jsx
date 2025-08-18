@@ -37,8 +37,8 @@ function Features() {
         <p className="text-base sm:text-lg text-gray-800">
           Cricktrade is an online player auction software that helps tournament
           organizers to conduct auction of players with multiple sports options
-          available like cricket, football, volleyball, kabaddi etc. We also
-          provide live streaming overlay and real-time updates.
+          available like cricket. We also provide live streaming overlay and
+          real-time updates.
         </p>
         <p className="mt-2 text-base sm:text-lg text-gray-800">
           For Tournament Organizers, maintaining excel sheets for each and every

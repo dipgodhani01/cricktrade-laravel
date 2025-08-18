@@ -4,7 +4,7 @@ import { LuListFilter } from "react-icons/lu";
 
 function SearchFilter({ handleChange, value, placeholder }) {
   return (
-    <div className="py-4">
+    <div className="py-4  ">
       <div className={searchContainer}>
         <LuListFilter className="text-[#AA2B1D]" size={20} />
         <input

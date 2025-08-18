@@ -8,7 +8,7 @@ function Loader3D({ transparent }) {
         <div className="absolute w-[140px] h-[140px] border border-transparent rounded-full border-b-[6px] border-b-rose-500 animate-[rotate2_2s_linear_infinite]"></div>
         <div className="absolute w-[140px] h-[140px] border border-transparent rounded-full border-b-[6px] border-b-cyan-400 animate-[rotate3_2s_linear_infinite]"></div>
         <div className="absolute w-[140px] h-[140px] border border-transparent rounded-full border-b-[6px] border-b-yellow-400 animate-[rotate4_2s_linear_infinite]"></div>
-        <div className={`${txt} text-xl absolute`}>loading</div>
+        {/* <div className={`${txt} text-xl absolute`}>loading</div> */}
       </div>
     </div>
   );

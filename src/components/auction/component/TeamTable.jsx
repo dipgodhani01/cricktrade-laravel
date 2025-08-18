@@ -37,12 +37,10 @@ function TeamTable({ filteredTeams }) {
             </td>
             <td
               className={`${tr} ${
-                team.player_allow === team.player_buy
-                  ? "text-green-700"
-                  : "text-orange-500"
+                team.status === 1 ? "text-green-700" : "text-orange-500"
               } font-medium`}
             >
-              {team.player_allow === team.player_buy ? "Completed" : "Pending"}
+              {team.status === 1 ? "Completed" : "Pending"}
             </td>
             <td className="border border-[#3f230575] px-4 py-2 text-blue-500 hover:text-blue-700">
               <button className="flex items-center justify-center w-full h-full">

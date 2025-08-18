@@ -103,6 +103,7 @@ export const auctionListTableHeader = [
   "Bid Increase By",
   "Player Per Team",
   "Auction Date",
+  "Status",
 ];
 
 export const playerListTableHeader = [

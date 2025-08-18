@@ -13,10 +13,6 @@ export const aboutData = [
     content:
       "Cricktrade is a player auction software where teams can bid on players participating in a sports tournament. There are lots of sports that the platform supports like Cricket, Football, Volleyball etc.",
   },
-   {
-    type: "paragraph",
-    content: "Cricktrade aims to revolutionize the way auctions are conducted in sports tournaments."
-  },
   {
     type: "heading",
     content: "Features We Provide",

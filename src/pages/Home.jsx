@@ -1,9 +1,9 @@
 import { useState } from "react";
-import bannerImg from "../assets/home_banner.jpg";
 import GoogleOAuthWrapper from "../auth/GoogleOAuthWrapper";
 import Features from "../components/home/Features";
 import Steps from "../components/home/Steps";
 import { useSelector } from "react-redux";
+import bannerImg from "../assets/bg1.jpg";
 
 function Home() {
   const [openModal, setOpenModal] = useState(false);
@@ -12,21 +12,23 @@ function Home() {
 
   return (
     <div>
-      <div className="relative w-full h-[55vh] md:h-[65vh]">
-        <img
-          src={bannerImg}
-          alt="banner"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-white bg-opacity-50"></div>
+      <div className="relative w-full h-[55vh] md:h-[65vh] text-black">
+        <img src={bannerImg} alt="banner" className="w-full h-full" />
+
+        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
 
         <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-4 z-10">
-          <p className="text-black text-3xl md:text-[38px] font-bold mb-4">
-            Best player auction software for cricket game,
+          <p className="text-white text-3xl md:text-[38px] font-bold mb-4">
+            India's best dedicated cricket auction Platform.
           </p>
-          <p className="text-black text-lg md:text-[32px] font-semibold mb-6">
-            100+ Auctions completed in 18 different countries. Register now.
+          <p className="text-white text-lg md:text-[32px] font-semibold mb-6">
+            Host fair, fast, and exciting player auctions for your team, club,
+            or academy.
           </p>
+          <p className="text-white text-lg md:text-[32px] font-semibold mb-6">
+            — built just for Indian cricket.
+          </p>
+
           <button
             className="bg-blue-500 text-white font-medium px-6 py-1.5 md:py-2 text-xl rounded hover:bg-blue-700 transition flex gap-1 items-center"
             onClick={() => setOpenModal(true)}
@@ -55,6 +57,7 @@ function Home() {
         )}
       </div>
       <br />
+
       <Features />
       <br />
       <Steps />

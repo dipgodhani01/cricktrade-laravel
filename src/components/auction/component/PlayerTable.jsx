@@ -1,4 +1,3 @@
-import React from "react";
 import { summaryPlayerTableHeader } from "../../../data/allMapingData";
 import Thead from "../../common/Thead";
 import { handleAmt } from "../../../helper/helper";
@@ -20,9 +19,17 @@ function PlayerTable({ filteredPlayers }) {
             </td>
             <td className={tr}>{player.player_name}</td>
             <td className={tr}>{player.category}</td>
-            <td className={tr}>{player.status}</td>
-            <td className={tr}>{player.sold_team}</td>
-            <td className={tr}>{handleAmt(player.final_bid)}</td>
+            <td className={tr}>
+              {player.status === 1
+                ? "Sold"
+                : player.status === 2
+                ? "Unsold"
+                : "Pending"}
+            </td>
+            <td className={tr}>{player.sold_team ? player.sold_team : "-"}</td>
+            <td className={tr}>
+              {player.final_bid ? handleAmt(player.final_bid) : "-"}
+            </td>
           </tr>
         ))}
       </tbody>

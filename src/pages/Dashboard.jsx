@@ -9,7 +9,6 @@ import { toast } from "react-toastify";
 import { actBtn, tr } from "../helper/style";
 import Thead from "../components/common/Thead";
 import DeletePopup from "../components/common/DeletePopup";
-import Loader3D from "../components/common/Loader3D";
 import { RxCross2 } from "react-icons/rx";
 import AuctionActionButtons from "../components/common/AuctionActionButtons";
 import AuctionStartPopup from "../components/common/AuctionStartPopup";
@@ -113,6 +112,21 @@ function Dashboard() {
                         <td className={tr}>{handleAmt(data.bid_increment)}</td>
                         <td className={tr}>{data.player_perteam}</td>
                         <td className={tr}>{formatDate(data?.auction_date)}</td>
+                        <td
+                          className={`${tr}  ${
+                            data?.status === 0
+                              ? "text-orange-500"
+                              : data?.status === 1
+                              ? "text-green-600"
+                              : "text-red-600"
+                          }`}
+                        >
+                          {data?.status === 0
+                            ? "Pending"
+                            : data?.status === 1
+                            ? "Completed"
+                            : "Cancelled"}
+                        </td>
                       </tr>
                     );
                   })}

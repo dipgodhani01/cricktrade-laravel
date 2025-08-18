@@ -3,11 +3,11 @@ import icon from "../assets/icon2.png";
 
 function Footer() {
   return (
-    <footer className="bg-black text-white mt-auto">
+    <footer className="bg-black text-white mt-auto font-sans tracking-wide text-lg">
       <div className="max-w-7xl mx-auto px-4 pt-5">
-        <div className="">
-          <img src={icon} alt="" className="mx-auto mb-2" />
-          <div className="text-center p-4 ">
+        <div>
+          <img src={icon} className="mx-auto mb-2" />
+          <div className="text-center p-4">
             <ul className="flex sm:flex-row flex-col sm:gap-8 gap-2 flex-wrap justify-center">
               <li>
                 <Link to="/about-us">About</Link>
@@ -35,7 +35,7 @@ function Footer() {
         </div>
       </div>
 
-      <div className="bg-black text-center text-sm text-gray-400 pb-4 p-4">
+      <div className="bg-black text-center text-gray-400 pb-4 p-4">
         © {new Date().getFullYear()} Cricktrade. All rights reserved.
       </div>
     </footer>

@@ -13,7 +13,6 @@ import { getAuctionById } from "../../redux/slice/auctionSlice";
 import PlayerCard from "./component/PlayerCard";
 import TeamButton from "./component/TeamButton";
 import AuctionActions from "./component/AuctionActions";
-import CountdownTimer from "../common/CountdownTimer";
 import Loader3D from "../common/Loader3D";
 
 function Auction() {
@@ -45,7 +44,7 @@ function Auction() {
   useEffect(() => {
     if (showTimer || transitioning) return;
 
-    const pendingPlayers = players?.filter((p) => p.status === "pending") || [];
+    const pendingPlayers = players?.filter((p) => p.status === 0) || [];
     if (pendingPlayers.length > 0) {
       const randomIndex = Math.floor(Math.random() * pendingPlayers.length);
       const player = pendingPlayers[randomIndex];
@@ -58,13 +57,17 @@ function Auction() {
   }, [players, showTimer, transitioning]);
 
   const handleTeamClick = (team) => {
+    console.log(team);
     if (!selectedAuction || !randomPlayer || transitioning) return;
     const newBid = Number(currentBid) + Number(selectedAuction.bid_increment);
+
     if (newBid > team.remember_balance) {
       toast.warn("Low balance. Unable to place bid.");
       return;
     }
-    if (!selectedTeam || selectedTeam?.id !== team?.id) {
+    if (!selectedTeam) {
+      setSelectedTeam(team);
+    } else if (selectedTeam?.id !== team?.id) {
       setSelectedTeam(team);
       setCurrentBid(newBid);
     } else {
@@ -158,7 +161,9 @@ function Auction() {
               {teams.map((team, i) => {
                 const isDisabled =
                   Number(team.player_allow) === team.player_buy ||
+                  team.state === 1 ||
                   transitioning;
+
                 return (
                   <TeamButton
                     key={i}

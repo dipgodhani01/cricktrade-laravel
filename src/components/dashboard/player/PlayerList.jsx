@@ -15,7 +15,6 @@ import Thead from "../../common/Thead";
 import { actBtn, notFound, tr, trUpper } from "../../../helper/style";
 import DeletePopup from "../../common/DeletePopup";
 import ReactPaginate from "react-paginate";
-import Loader3D from "../../common/Loader3D";
 import SearchFilter from "../../common/SearchFilter";
 import Loader1 from "../../common/Loader1";
 

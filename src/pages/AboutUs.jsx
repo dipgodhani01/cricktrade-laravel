@@ -2,7 +2,7 @@ import { aboutData } from "../data/about";
 
 function AboutUs() {
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10 text-gray-800">
+    <div className="max-w-4xl mx-auto px-4 py-10 text-gray-800 min-h-[calc(100vh-293px)]">
       {aboutData.map((section, index) => {
         if (section.type === "heading") {
           return (
