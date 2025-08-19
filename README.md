@@ -14,3 +14,4 @@ If you are developing a production application, we recommend using TypeScript wi
 
 # Task
 1. After complete auction change to pending player to unsold.
+2. When once time auction has been completed then after not open auction.

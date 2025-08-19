@@ -5,7 +5,7 @@ import { tr } from "../../../helper/style";
 
 function PlayerTable({ filteredPlayers }) {
   return (
-    <table className="w-full min-w-[1200px] border-collapse">
+    <table className="w-full min-w-[992px] border-collapse">
       <Thead data={summaryPlayerTableHeader} />
       <tbody>
         {filteredPlayers.map((player) => (
@@ -14,7 +14,7 @@ function PlayerTable({ filteredPlayers }) {
             <td className={tr}>
               <img
                 src={player.player_logo}
-                className="w-16 h-14 object-cover rounded mx-auto"
+                className="w-12 h-10 object-cover rounded mx-auto"
               />
             </td>
             <td className={tr}>{player.player_name}</td>

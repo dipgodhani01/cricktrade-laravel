@@ -1,4 +1,4 @@
-export const th = `border border-[#3f230575] bg-[#FFEDC6] text-[#8E0505] tracking-wider px-4 py-2 text-left font-medium text-lg font-sans`
+export const th = `border border-[#3f230575] bg-[#FFEDC6] text-[#8E0505] tracking-wider px-4 py-2 text-left font-medium font-sans`
 export const tr = `border border-[#3f230575] px-4 py-2 tracking-wider font-sans text-[#A40000]`
 export const trUpper = `border border-[#3f230575] px-4 py-2 uppercase`
 export const actBtn = `bg-[#AA2B1D] hover:bg-[#A12631] transition h-8 w-8 flex items-center justify-center rounded-full text-white`

@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { playerListTableHeader } from "../../../data/allMapingData";
 import { useNavigate, useParams } from "react-router-dom";
-import { MdCurrencyRupee, MdDelete, MdEdit } from "react-icons/md";
+import {
+  MdCloudDownload,
+  MdCurrencyRupee,
+  MdDelete,
+  MdEdit,
+} from "react-icons/md";
 import {
   deletePlayer,
   getAllPlayers,
@@ -17,11 +22,19 @@ import DeletePopup from "../../common/DeletePopup";
 import ReactPaginate from "react-paginate";
 import SearchFilter from "../../common/SearchFilter";
 import Loader1 from "../../common/Loader1";
+import Badge from "../../common/Badge";
+import StatusFilter from "../../common/StatusFilter";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+import CategoryFilter from "../../common/CategoryFilter";
+import { handleAmt } from "../../../helper/helper";
 
 function PlayerList() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [selectedPlayerId, setSelectedPlayerId] = useState("");
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
   const [minBid, setMinBid] = useState(false);
   const [error, setError] = useState({});
   const [currentPage, setCurrentPage] = useState(0);
@@ -32,9 +45,20 @@ function PlayerList() {
   const dispatch = useDispatch();
   const playersPerPage = 10;
   const offset = currentPage * playersPerPage;
-  const filteredPlayers = players.filter((player) =>
-    player.player_name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+
+  const filteredPlayers = players.filter((player) => {
+    const matchesSearch = player.player_name
+      ?.toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === "" ? true : String(player.status) === statusFilter;
+
+    const matchesCategory =
+      categoryFilter === "" ? true : player.category === categoryFilter;
+
+    return matchesSearch && matchesStatus && matchesCategory;
+  });
 
   const currentPlayers = filteredPlayers.slice(offset, offset + playersPerPage);
   const pageCount = Math.ceil(filteredPlayers.length / playersPerPage);
@@ -85,6 +109,37 @@ function PlayerList() {
     dispatch(getAllPlayers(auctionId));
   }, [auctionId]);
 
+  const handleDownload = () => {
+    if (!players || players.length === 0) {
+      toast.error("No players to download!");
+      return;
+    }
+
+    const data = players.map((p, i) => [
+      p.index,
+      p.player_name,
+      p.category,
+      p.phone,
+    ]);
+
+    const header = ["ID", "Player Name", "Category", "Phone"];
+
+    const title = [["TGPL - 2026"]];
+    const description = [["Player's list"]];
+    const emptyRow = [[]];
+
+    const finalData = [...title, ...description, ...emptyRow, header, ...data];
+    const ws = XLSX.utils.aoa_to_sheet(finalData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Players");
+
+    const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([wbout], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8",
+    });
+
+    saveAs(blob, "players.xlsx");
+  };
   return (
     <div>
       <div className="bg-[#FAF4E1] p-4 rounded shadow min-h-[calc(100vh-65px)] text-[#A40000]">
@@ -98,14 +153,52 @@ function PlayerList() {
           + Add Player
         </button>
 
-        <SearchFilter
-          placeholder="Search Player..."
-          value={searchTerm}
-          handleChange={(e) => {
-            setSearchTerm(e.target.value);
-            setCurrentPage(0);
-          }}
-        />
+        <div>
+          <SearchFilter
+            placeholder="Search Player..."
+            value={searchTerm}
+            handleChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(0);
+            }}
+          />
+
+          <div className="flex gap-4 justify-end w-full pb-4">
+            <StatusFilter
+              statusFilter={statusFilter}
+              setStatusFilter={setStatusFilter}
+              setCurrentPage={setCurrentPage}
+              options={[
+                { value: "0", label: "Pending" },
+                { value: "1", label: "Sold" },
+                { value: "2", label: "Unsold" },
+              ]}
+            />
+
+            <CategoryFilter
+              categoryFilter={categoryFilter}
+              setCategoryFilter={setCategoryFilter}
+              options={[
+                { value: "Batsman", label: "Batsman" },
+                { value: "Bowler", label: "Bowler" },
+                { value: "All-Rounder", label: "All-Rounder" },
+                {
+                  value: "Wicketkeeper-Batsman",
+                  label: "Wicketkeeper-Batsman",
+                },
+              ]}
+              placeholder="Category"
+            />
+
+            <button
+              onClick={handleDownload}
+              className="min-w-fit bg-[#A40000] text-white px-4 py-2 rounded flex gap-2 items-center justify-center font-medium tracking-wide"
+            >
+              <MdCloudDownload size={18} />
+              <span>Download (Excel)</span>
+            </button>
+          </div>
+        </div>
 
         {playerLoading ? (
           <Loader1 />
@@ -150,25 +243,23 @@ function PlayerList() {
                           </div>
                         </td>
                         <td className={tr}>{data.player_name}</td>
-                        <td className={tr}>{data.minimum_bid}</td>
                         <td className={tr}>{data.category}</td>
+                        <td className={tr}>{handleAmt(data.minimum_bid)}</td>
                         <td className={tr}>{data.phone}</td>
                         <td className={trUpper}>{data.tshirt_size}</td>
                         <td className={trUpper}>{data.trouser_size || "-"}</td>
                         <td className={tr}>{data.tshirt_name}</td>
                         <td className={tr}>{data.tshirt_number}</td>
-                        <td
-                          className={`${tr} capitalize font-medium border border-[#3f230575] ${
-                            data.status === "sold"
-                              ? "text-green-600"
-                              : data.status === "unsold"
-                              ? "text-red-600"
-                              : data.status === "pending"
-                              ? "text-orange-600"
-                              : ""
-                          }`}
-                        >
-                          {data.status}
+                        <td className={tr}>
+                          <div>
+                            {data.status === 0 ? (
+                              <Badge variant="warning" children="pending" />
+                            ) : data.status === 1 ? (
+                              <Badge variant="success" children="sold" />
+                            ) : (
+                              <Badge variant="danger" children="unsold" />
+                            )}
+                          </div>
                         </td>
                       </tr>
                     );

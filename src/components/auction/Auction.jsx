@@ -57,7 +57,6 @@ function Auction() {
   }, [players, showTimer, transitioning]);
 
   const handleTeamClick = (team) => {
-    console.log(team);
     if (!selectedAuction || !randomPlayer || transitioning) return;
     const newBid = Number(currentBid) + Number(selectedAuction.bid_increment);
 
@@ -94,7 +93,7 @@ function Auction() {
       setTransitioning(true);
       const timer = setTimeout(() => {
         setTransitioning(false);
-      }, 3000);
+      }, 2000);
 
       return () => clearTimeout(timer);
     });
@@ -121,7 +120,7 @@ function Auction() {
       setTransitioning(true);
       const timer = setTimeout(() => {
         setTransitioning(false);
-      }, 2500);
+      }, 2000);
 
       return () => clearTimeout(timer);
     });
@@ -157,7 +156,7 @@ function Auction() {
           <PlayerCard player={randomPlayer} />
 
           <div className="w-full lg:w-[55%] text-white flex flex-col">
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-2 gap-8">
               {teams.map((team, i) => {
                 const isDisabled =
                   Number(team.player_allow) === team.player_buy ||

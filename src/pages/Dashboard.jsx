@@ -6,13 +6,15 @@ import { auctionListTableHeader } from "../data/allMapingData";
 import { formatDate, handleAmt } from "../helper/helper";
 import { unsoldToSoldPlayerApi } from "../utils/api";
 import { toast } from "react-toastify";
-import { actBtn, tr } from "../helper/style";
+import { actBtn, tr, notFound } from "../helper/style";
 import Thead from "../components/common/Thead";
 import DeletePopup from "../components/common/DeletePopup";
 import { RxCross2 } from "react-icons/rx";
 import AuctionActionButtons from "../components/common/AuctionActionButtons";
 import AuctionStartPopup from "../components/common/AuctionStartPopup";
 import Loader1 from "../components/common/Loader1";
+import SearchFilter from "../components/common/SearchFilter";
+import StatusFilter from "../components/common/StatusFilter";
 
 function Dashboard() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -21,10 +23,24 @@ function Dashboard() {
   const [imagePopupOpen, setImagePopupOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.user.user.user_id);
   const { auctions, auctionLoading } = useSelector((state) => state.auctions);
+
+  const filteredAuctions = auctions.filter((auction) => {
+    const matchesSearch = auction.auction_name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === "" ? true : auction.status === Number(statusFilter);
+
+    return matchesSearch && matchesStatus;
+  });
 
   function confirmDelete(auctionId) {
     setSelectedAuctionId(auctionId);
@@ -51,15 +67,13 @@ function Dashboard() {
   }
 
   async function unsoldToSold(auctionId) {
-    const auction_id = auctionId;
-
     try {
-      const res = await unsoldToSoldPlayerApi(auction_id);
+      const res = await unsoldToSoldPlayerApi(auctionId);
       if (res.data.success === true) {
         toast.success(res.data.message);
       }
     } catch (error) {
-      if (error.response && error.response.data) {
+      if (error.response?.data) {
         toast.info(error.response.data.message);
       } else {
         toast.error("Unexpected error occurred.");
@@ -81,61 +95,80 @@ function Dashboard() {
         >
           + Add Auction
         </button>
+
+        {/* ✅ Filters */}
+        <div className="flex gap-6 items-center mt-6">
+          <SearchFilter
+            placeholder="Search Auction..."
+            value={searchTerm}
+            handleChange={(e) => {
+              setSearchTerm(e.target.value);
+            }}
+          />
+          <StatusFilter
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+            options={[
+              { value: "0", label: "Pending" },
+              { value: "1", label: "Completed" },
+              { value: "2", label: "Cancelled" },
+            ]}
+          />
+        </div>
+
         <br />
         {auctionLoading ? (
           <Loader1 />
         ) : (
           <div className="mt-4 overflow-x-auto table-responsive">
-            {auctions && auctions.length > 0 ? (
+            {filteredAuctions && filteredAuctions.length > 0 ? (
               <table className="border-collapse w-full mb-3 min-w-[1280px] shadow-md">
                 <Thead data={auctionListTableHeader} />
                 <tbody className="bg-[#FFFEEC]">
-                  {auctions.map((data) => {
-                    return (
-                      <tr key={data.id}>
-                        <td className="border border-[#3f230575] px-4 py-2">
-                          <AuctionActionButtons
-                            auctionId={data.id}
-                            auctionLogo={data.auction_logo}
-                            actBtn={actBtn}
-                            confirmDelete={confirmDelete}
-                            confirmOpen={confirmOpen}
-                            unsoldToSold={unsoldToSold}
-                            setSelectedImage={setSelectedImage}
-                            setImagePopupOpen={setImagePopupOpen}
-                          />
-                        </td>
-                        <td className={tr}>{data.auction_name}</td>
-                        <td className={tr}>{data.sports_type}</td>
-                        <td className={tr}>{handleAmt(data.point_perteam)}</td>
-                        <td className={tr}>{handleAmt(data.minimum_bid)}</td>
-                        <td className={tr}>{handleAmt(data.bid_increment)}</td>
-                        <td className={tr}>{data.player_perteam}</td>
-                        <td className={tr}>{formatDate(data?.auction_date)}</td>
-                        <td
-                          className={`${tr}  ${
-                            data?.status === 0
-                              ? "text-orange-500"
-                              : data?.status === 1
-                              ? "text-green-600"
-                              : "text-red-600"
-                          }`}
-                        >
-                          {data?.status === 0
-                            ? "Pending"
+                  {filteredAuctions.map((data) => (
+                    <tr key={data.id}>
+                      <td className="border border-[#3f230575] px-4 py-2">
+                        <AuctionActionButtons
+                          auctionId={data.id}
+                          auctionLogo={data.auction_logo}
+                          actBtn={actBtn}
+                          confirmDelete={confirmDelete}
+                          confirmOpen={confirmOpen}
+                          unsoldToSold={unsoldToSold}
+                          setSelectedImage={setSelectedImage}
+                          setImagePopupOpen={setImagePopupOpen}
+                          auctionDate={data.auction_date}
+                          status={data.status}
+                        />
+                      </td>
+                      <td className={tr}>{data.auction_name}</td>
+                      <td className={tr}>{data.sports_type}</td>
+                      <td className={tr}>{handleAmt(data.point_perteam)}</td>
+                      <td className={tr}>{handleAmt(data.minimum_bid)}</td>
+                      <td className={tr}>{handleAmt(data.bid_increment)}</td>
+                      <td className={tr}>{data.player_perteam}</td>
+                      <td className={tr}>{formatDate(data?.auction_date)}</td>
+                      <td
+                        className={`${tr} ${
+                          data?.status === 0
+                            ? "text-orange-500"
                             : data?.status === 1
-                            ? "Completed"
-                            : "Cancelled"}
-                        </td>
-                      </tr>
-                    );
-                  })}
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}
+                      >
+                        {data?.status === 0
+                          ? "Pending"
+                          : data?.status === 1
+                          ? "Completed"
+                          : "Cancelled"}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             ) : (
-              <div className="p-4 text-center text-red-600 text-xl md:text-2xl font-medium">
-                No Auction Available
-              </div>
+              <div className={notFound}>No Auction Available</div>
             )}
           </div>
         )}

@@ -7,7 +7,7 @@ function Thead({ data }) {
         {data?.map((li, i) => (
           <th
             key={i}
-            className={`${th} ${li === "Player Name" && "w-[350px]"}`}
+            className={`${th} ${li === "Player Name" && "min-w-[380px]"}`}
           >
             {li}
           </th>

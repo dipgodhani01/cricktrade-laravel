@@ -109,9 +109,9 @@ export const auctionListTableHeader = [
 export const playerListTableHeader = [
   "Actions",
   "Player Name",
-  "Minimum Bid",
-  "Sport Category",
-  "Mobile Number",
+  "Category",
+  "Base Price",
+  "Phone no.",
   "Tshirt Size",
   "Trouser Size",
   "Tshirt Name",

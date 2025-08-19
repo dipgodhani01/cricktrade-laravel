@@ -6,7 +6,7 @@ function Tabs({ tabs, activeTab, setActiveTab }) {
       {tabs.map((tab, index) => (
         <button
           key={index}
-          className={`px-6 py-2 rounded-t-lg font-medium transition-all divide-gray-300 ${
+          className={`px-8 py-2 text-lg font-medium transition-all divide-gray-300 ${
             activeTab === index
               ? "bg-[#A40000] text-white"
               : "bg-gray-200 text-black"

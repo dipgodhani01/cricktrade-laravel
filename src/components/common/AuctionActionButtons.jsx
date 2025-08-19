@@ -13,20 +13,52 @@ const AuctionActionButtons = ({
   unsoldToSold,
   setSelectedImage,
   setImagePopupOpen,
+  auctionDate,
+  status,
 }) => {
   const navigate = useNavigate();
 
   const handleCopyLink = () => {
     const link = `${window.location.origin}/add-player/${auctionId}`;
     navigator.clipboard.writeText(link);
-    toast.success("Link copied!");
+    toast.success("Form Link copied!");
   };
+  const handleExpiredAction = (str) => {
+    let msg = "";
+    if (str === "edit") {
+      msg =
+        "Cannot edit auction after auction date has passed. Please create new auction.";
+    } else if (str === "players") {
+      msg =
+        "Cannot view players after the auction date has passed. If you want to see player details, please check them in the auction summary.";
+    } else if (str === "teams") {
+      msg =
+        "Cannot view teams after the auction date has passed. If you want to see player details, please check them in the auction summary.";
+    } else if (str === "dashboard") {
+      msg =
+        "Cannot open dashboard after auction date have passed. Please create new auction.";
+    } else if (str === "reset") {
+      msg =
+        "Cannot change players status after auction date have passed. Please create new auction.";
+    } else if (str === "copy") {
+      msg =
+        "Cannot copied form link after auction date have passed. Please create new auction.";
+    }
+    toast.warning(msg);
+  };
+
+  // Auction date check
+  const isExpired = new Date(auctionDate + "T23:59:59") < new Date();
 
   return (
     <div className="flex gap-2 text-white">
       <button
         className={actBtn}
-        onClick={() => navigate(`/edit-auction/${auctionId}`)}
+        onClick={() =>
+          isExpired
+            ? handleExpiredAction("edit")
+            : navigate(`/edit-auction/${auctionId}`)
+        }
         title="Edit Auction"
       >
         <MdEdit size={18} />
@@ -42,7 +74,11 @@ const AuctionActionButtons = ({
 
       <button
         className={actBtn}
-        onClick={() => navigate(`/players/${auctionId}`)}
+        onClick={() =>
+          isExpired
+            ? handleExpiredAction("players")
+            : navigate(`/players/${auctionId}`)
+        }
         title="All Players"
       >
         <FaUser size={16} />
@@ -50,7 +86,11 @@ const AuctionActionButtons = ({
 
       <button
         className={actBtn}
-        onClick={() => navigate(`/teams/${auctionId}`)}
+        onClick={() =>
+          isExpired
+            ? handleExpiredAction("teams")
+            : navigate(`/teams/${auctionId}`)
+        }
         title="All Teams"
       >
         <FaUserGroup size={16} />
@@ -58,7 +98,9 @@ const AuctionActionButtons = ({
 
       <button
         className={actBtn}
-        onClick={() => confirmOpen(auctionId)}
+        onClick={() =>
+          isExpired ? handleExpiredAction("dashboard") : confirmOpen(auctionId)
+        }
         title="Auction Dashboard"
       >
         <MdDashboard size={16} />
@@ -66,7 +108,9 @@ const AuctionActionButtons = ({
 
       <button
         className={actBtn}
-        onClick={() => unsoldToSold(auctionId)}
+        onClick={() =>
+          isExpired ? handleExpiredAction("reset") : unsoldToSold(auctionId)
+        }
         title="Mark all unsold players as available"
       >
         <GrPowerReset size={16} />
@@ -93,7 +137,9 @@ const AuctionActionButtons = ({
 
       <button
         className={actBtn}
-        onClick={handleCopyLink}
+        onClick={() =>
+          isExpired ? handleExpiredAction("copy") : handleCopyLink()
+        }
         title="Copy & share form link with players"
       >
         <FaCopy size={16} />

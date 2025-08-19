@@ -71,7 +71,7 @@ function AuctionSummary({ auctionId }) {
               handleChange={(e) => setPlayerSearchTerm(e.target.value)}
             />
           )}
-          {playerLoading ? (
+          {playerLoading && !teamLoading ? (
             <Chakra center={true} />
           ) : filteredPlayers?.length > 0 ? (
             <PlayerTable filteredPlayers={filteredPlayers} />

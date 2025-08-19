@@ -93,7 +93,7 @@ function CreatePlayers() {
         onSubmit={onFormSubmit}
         className="p-6 border shadow lg:w-[70%] mx-auto"
       >
-        <h2 className="text-2xl font-medium">Add Details</h2>
+        <h2 className="text-2xl font-medium font-sans">Add Player Details</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
           {imagePreview && (
             <div>

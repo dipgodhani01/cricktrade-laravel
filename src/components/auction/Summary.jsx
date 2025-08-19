@@ -29,15 +29,15 @@ function Summary() {
   const tabList = [{ label: "Auction Summary" }, { label: "Players List" }];
   return (
     <div className="bg-[#FAF4E1] min-h-screen">
-      {auctionLoading ? (
+      {/* {auctionLoading ? (
         <Chakra center={true} />
-      ) : (
-        <SummaryHead
-          logo={selectedAuction?.auction_logo}
-          name={selectedAuction?.auction_name}
-          totalTeams={totalTeams}
-        />
-      )}
+      ) : ( */}
+      <SummaryHead
+        logo={selectedAuction?.auction_logo}
+        name={selectedAuction?.auction_name}
+        totalTeams={totalTeams}
+      />
+      {/* )} */}
       <Tabs tabs={tabList} activeTab={activeTab} setActiveTab={setActiveTab} />
       {activeTab === 0 && <AuctionSummary auctionId={auctionId} />}
       {activeTab === 1 && <PlayersAll auctionId={auctionId} />}
